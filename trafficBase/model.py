@@ -49,6 +49,13 @@ class CityModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
 
         self.num_agents = N
+
+        # Creates the cars
+        for i in range(self.num_agents):
+            agent = Car(i, self)
+            self.grid.place_agent(agent, (0, 0))
+            self.schedule.add(agent)
+
         self.running = True
 
     def step(self):
