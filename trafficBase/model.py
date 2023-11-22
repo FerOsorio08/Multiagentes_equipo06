@@ -158,6 +158,31 @@ class CityModel(Model):
                             if neighbor in graph.nodes:
                                 direction = graph.nodes[node]['direction']
                                 graph.add_edge(node, neighbor, weight=direction)
+                #Right
+                if graph.nodes[node]['direction'] == ">":
+                    if (x + 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x + 1, y)]:
+                        if graph.nodes[(x + 1, y)]['signal_type'] == "long" or graph.nodes[(x + 1, y)]['signal_type'] == "short":
+                            neighbors = [
+                                (x + 1, y + 1),
+                                (x + 1, y - 1),
+                                (x + 1, y)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    graph.add_edge(node, neighbor, weight=direction)
+                                    # graph.add_edge(neighbor, (x - 2, y), weight=direction)
+                            graph.add_edge((x + 1, y), (x + 2, y), weight=direction)
+                    else:
+                        neighbors = [
+                            (x + 1, y + 1),
+                            (x + 1, y - 1),
+                            (x + 1, y)
+                        ]
+                        for neighbor in neighbors:
+                            if neighbor in graph.nodes:
+                                direction = graph.nodes[node]['direction']
+                                graph.add_edge(node, neighbor, weight=direction)
                 
                 # if graph.nodes[node]['direction'] == "<":
                 #     neighbors = [
