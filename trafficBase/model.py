@@ -33,9 +33,11 @@ class CityModel(Model):
                     if col in ["v", "^", ">", "<"]:
                         agent = Road(f"r_{r*self.width+c}", self, dataDictionary[col])
                         self.grid.place_agent(agent, (c, self.height - r - 1))
+                        print()
 
                     elif col in ["S", "s"]:
-                        agent = Traffic_Light(f"tl_{r*self.width+c}", self, False if col == "S" else True, int(dataDictionary[col]))
+                        traffic_type = "S" if col == "S" else "s"
+                        agent = Traffic_Light(f"tl_{r*self.width+c}", self, traffic_type, False if col == "S" else True, int(dataDictionary[col]))
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
                         self.traffic_lights.append(agent)
@@ -51,7 +53,7 @@ class CityModel(Model):
         self.num_agents = N
 
         # Creates the cars
-        for i in range(self.num_agents):
+        for i in range(1):
             agent = Car(i, self)
             self.grid.place_agent(agent, (0, 0))
             self.schedule.add(agent)
