@@ -4,6 +4,7 @@ from mesa.space import MultiGrid
 from agent import *
 import json
 import networkx as nx
+import matplotlib.pyplot as plt
 
 class CityModel(Model):
     """ 
@@ -18,6 +19,7 @@ class CityModel(Model):
 
             self.traffic_lights = []
             graph = nx.DiGraph()  # Change to directed graph
+            goal = (0, 0)  # Change to destination
 
             # Load the map file. The map file is a text file where each character represents an agent.
             with open('city_files/2022_base.txt') as baseFile:
@@ -37,12 +39,14 @@ class CityModel(Model):
                             graph.add_node((c, self.height - r - 1), direction=col)  # Add direction as an attribute
 
                         elif col in ["S", "s"]:
-                            agent = Traffic_Light(f"tl_{r * self.width + c}", self, False if col == "S" else True,
-                                                int(dataDictionary[col]))
+                            agent = Traffic_Light(f"tl_{r * self.width + c}", self, False if col == "S" else True, int(dataDictionary[col]))
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             self.schedule.add(agent)
                             self.traffic_lights.append(agent)
-                            graph.add_node((c, self.height - r - 1), direction=None)  # No direction for traffic lights
+                            # Add an attribute to mark "S" as "long" and "s" as "short"
+                            graph.add_node((c, self.height - r - 1), direction=None, signal_type="long" if col == "S" else "short")
+                            # print("signal_type: ", graph.nodes[(c, self.height - r - 1)]['signal_type'])
+
 
                         elif col == "#":
                             agent = Obstacle(f"ob_{r * self.width + c}", self)
@@ -52,32 +56,78 @@ class CityModel(Model):
                             agent = Destination(f"d_{r * self.width + c}", self)
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             graph.add_node((c, self.height - r - 1), direction=None)  # No direction for destination
+                            goal = (c, self.height - r - 1)
+                            print("goal: ", goal)
+
 
             # Add directed edges for neighboring intersections with direction as weight
+            # for node in graph.nodes:
+            #     x, y = node
+            #     neighbors = [
+            #         (x + 1, y+1),
+            #         (x - 1, y+1),
+            #         (x, y + 1)
+            #         (x, y - 1)
+            #     ]
+            #     for neighbor in neighbors:
+            #         if neighbor in graph.nodes:
+            #             direction = graph.nodes[node]['direction']
+            #             # print("direction: ", direction)
+            #             graph.add_edge(node, neighbor, weight=direction)
+            
             for node in graph.nodes:
                 x, y = node
-                neighbors = [
-                    (x + 1, y),
-                    (x - 1, y),
-                    (x, y + 1),
-                    (x, y - 1)
-                ]
-                for neighbor in neighbors:
-                    if neighbor in graph.nodes:
-                        direction = graph.nodes[node]['direction']
-                        print("direction: ", direction)
-                        graph.add_edge(node, neighbor, weight=direction)
+                # x1,y1 = neighbor_node
+
+                if graph.nodes[node]['direction'] == "^":
+                    if (x, y + 1) in graph.nodes and 'signal_type' in graph.nodes[(x, y + 1)]:
+                        if graph.nodes[(x, y + 1)]['signal_type'] == "long" or graph.nodes[(x, y + 1)]['signal_type'] == "short":
+                            neighbors = [
+                                (x - 1, y + 1),
+                                (x, y + 1)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    graph.add_edge(node, neighbor, weight=direction)
+                    else:
+                        neighbors = [
+                            (x + 1, y + 1),
+                            (x - 1, y + 1),
+                            (x, y + 1)
+                        ]
+                        for neighbor in neighbors:
+                            if neighbor in graph.nodes:
+                                direction = graph.nodes[node]['direction']
+                                graph.add_edge(node, neighbor, weight=direction)
+                # if graph.nodes[node]['direction'] == "<":
+                #     neighbors = [
+                #         (x - 1, y + 1),
+                #         (x - 1, y),
+                #         (x - 1, y - 1)
+                #     ]
+                    
+                #     for neighbor in neighbors:
+                #         if neighbor in graph.nodes:
+                #             direction = graph.nodes[node]['direction']
+                #             graph.add_edge(node, neighbor, weight=direction)
 
             self.num_agents = N
 
             # Creates the cars
             for i in range(1):
-                agent = Car(i, self, graph)
-                print("graph: ", graph.nodes)
+                agent = Car(i, self, graph,goal)
+                # print("graph: ", graph.nodes)
                 self.grid.place_agent(agent, (0, 0))
                 self.schedule.add(agent)
 
             self.running = True
+            self.plot_graph(graph)
+
+    def plot_graph(self, graph):
+        pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
+        nx.draw(graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
+        plt.show()
 
     def step(self):
         '''Advance the model by one step.'''

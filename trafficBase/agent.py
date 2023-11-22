@@ -1,4 +1,5 @@
 from mesa import Agent
+import networkx as nx
 
 class Car(Agent):
     """
@@ -7,7 +8,7 @@ class Car(Agent):
         unique_id: Agent's ID 
         direction: Randomly chosen direction chosen from one of eight directions
     """
-    def __init__(self, unique_id, model,graph):
+    def __init__(self, unique_id, model,graph,goal):
         """
         Creates a new random agent.
         Args:
@@ -16,6 +17,8 @@ class Car(Agent):
         """
         super().__init__(unique_id, model)
         self.graph=graph
+        self.initialPos = (0,0)
+        self.goal = goal
 
     def move(self):
         """ 
@@ -158,12 +161,41 @@ class Car(Agent):
             if isinstance(agent, Obstacle):
                 return True
             return False
+
+    #Complejidad O(E +VlogV), donde E es el numero de aristas y V el numero de vertices
+    def a_star_search(self, graph, start, goal):
+        """A* search to find the shortest path between a start and a goal node.
+        Args:
+            graph: The graph to search
+            start: The start node
+            goal: The goal node
+        """
+        # self.graph.add_node(self.initialPos)
+        print("start: ", start)
+        print("goal: ", goal)
+        x, y = start
+        j, i = goal
+        try:
+            path = nx.astar_path(graph, start, goal, heuristic=self.heuristic)
+            print("path: ", path)
+            return path
+        except nx.NetworkXNoPath:
+            # If no path is found, return None
+            return None
+    
+    #Complejidad O(1)
+    def heuristic(self, a, b):
+        """Manhattan distance heuristic for A* pathfinding."""
+        (x1, y1) = a
+        (x2, y2) = b
+        return abs(x1 - x2) + abs(y1 - y2)
     
     def step(self):
         """ 
         Determines the new direction it will take, and then moves
         """
         self.move()
+        # self.a_star_search(self.graph,(0,0), self.goal)
 
 class Traffic_Light(Agent):
     """
