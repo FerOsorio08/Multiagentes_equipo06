@@ -79,10 +79,12 @@ class CityModel(Model):
                 x, y = node
                 # x1,y1 = neighbor_node
 
+                # UP
                 if graph.nodes[node]['direction'] == "^":
                     if (x, y + 1) in graph.nodes and 'signal_type' in graph.nodes[(x, y + 1)]:
                         if graph.nodes[(x, y + 1)]['signal_type'] == "long" or graph.nodes[(x, y + 1)]['signal_type'] == "short":
                             neighbors = [
+                                (x + 1, y + 1),
                                 (x - 1, y + 1),
                                 (x, y + 1)
                             ]
@@ -90,6 +92,8 @@ class CityModel(Model):
                                 if neighbor in graph.nodes:
                                     direction = graph.nodes[node]['direction']
                                     graph.add_edge(node, neighbor, weight=direction)
+                                    # graph.add_edge(neighbor, (x, y - 2), weight=direction)
+                            graph.add_edge((x, y + 1), (x, y + 2), weight=direction)
                     else:
                         neighbors = [
                             (x + 1, y + 1),
@@ -100,6 +104,61 @@ class CityModel(Model):
                             if neighbor in graph.nodes:
                                 direction = graph.nodes[node]['direction']
                                 graph.add_edge(node, neighbor, weight=direction)
+                
+                #DOWN
+                if graph.nodes[node]['direction'] == "v":
+                    if (x, y - 1) in graph.nodes and 'signal_type' in graph.nodes[(x, y -1)]:
+                        if graph.nodes[(x, y - 1)]['signal_type'] == "long" or graph.nodes[(x, y - 1)]['signal_type'] == "short":
+                            neighbors = [
+                                (x + 1, y - 1),
+                                (x - 1, y - 1),
+                                (x, y - 1)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    graph.add_edge(node, neighbor, weight=direction)
+                                    #add next edge to S node
+                                    # graph.add_edge(neighbor, (x, y + 2), weight=direction)
+                            graph.add_edge((x, y - 1), (x, y - 2), weight=direction)
+                                
+                    else:
+                        neighbors = [
+                            (x + 1, y - 1),
+                            (x - 1, y - 1),
+                            (x, y - 1)
+                        ]
+                        for neighbor in neighbors:
+                            if neighbor in graph.nodes:
+                                direction = graph.nodes[node]['direction']
+                                graph.add_edge(node, neighbor, weight=direction)
+                
+                #LEFT
+                if graph.nodes[node]['direction'] == "<":
+                    if (x - 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x - 1, y)]:
+                        if graph.nodes[(x - 1, y)]['signal_type'] == "long" or graph.nodes[(x - 1, y)]['signal_type'] == "short":
+                            neighbors = [
+                                (x - 1, y + 1),
+                                (x - 1, y - 1),
+                                (x - 1, y)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    graph.add_edge(node, neighbor, weight=direction)
+                                    # graph.add_edge(neighbor, (x + 2, y), weight=direction)
+                            graph.add_edge((x - 1, y), (x - 2, y), weight=direction)
+                    else:
+                        neighbors = [
+                            (x - 1, y + 1),
+                            (x - 1, y - 1),
+                            (x - 1, y)
+                        ]
+                        for neighbor in neighbors:
+                            if neighbor in graph.nodes:
+                                direction = graph.nodes[node]['direction']
+                                graph.add_edge(node, neighbor, weight=direction)
+                
                 # if graph.nodes[node]['direction'] == "<":
                 #     neighbors = [
                 #         (x - 1, y + 1),
