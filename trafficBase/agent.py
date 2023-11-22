@@ -52,11 +52,12 @@ class Car(Agent):
         next_move_obstacle = [p for p,f in zip(possible_steps, ObstacleSpaces) if f == True]
         
         # Cuando el agente esta sobre un semaforo todavía no funciona. 
-        # if len(next_move_s) > 0:
-        #     next_move = self.random.choice(next_move_s)
-        #     self.model.grid.move_agent(self, next_move)
-        #     return
-        
+        if len(next_move_s) > 0:
+            print("green Light")
+            next_move = self.random.choice(next_move_s)
+            
+            self.model.grid.move_agent(self, next_move)
+            return
         #Se encarga de mover hacia la derecha
         if len(next_move_road_right) > 0:
             next_move = self.random.choice(next_move_road_right) 
@@ -87,15 +88,29 @@ class Car(Agent):
             self.model.grid.move_agent(self, (x,y))
             return
            
-        
+    def checktrafficLight(self, pos):
+        contents = self.model.grid.get_cell_list_contents(pos)
+        x,y=self.pos
+        x1, y1=pos
+        for agent in contents:
+            if isinstance(agent, Road):
+                if agent.po
+                return agent.state
+        return False 
 
     def trafficLight_s(self, pos):
+        print("Checking for green lists")
         contents = self.model.grid.get_cell_list_contents(pos)
         #print(contents)
         for agent in contents:
             if isinstance(agent, Traffic_Light):
-                if agent.traffic_type == "s":
-                    return True 
+                print("hello")
+                if agent.traffic_type == True:
+                    print("Check2")
+                    if agent.state==True: #if the traffic light is green
+                        return True 
+                else:
+                    print(agent.traffic_type)
             return False
     
     def trafficLight_S(self, pos):
@@ -103,8 +118,9 @@ class Car(Agent):
         #print(contents)
         for agent in contents:
             if isinstance(agent, Traffic_Light):
-                if agent.traffic_type == "S":
-                    return True 
+                if agent.traffic_type == False:
+                    if agent.state==True: #if traffic light is green
+                        return True 
             return False
     
     def road_up(self, pos):
