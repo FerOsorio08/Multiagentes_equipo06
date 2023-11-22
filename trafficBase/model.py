@@ -22,7 +22,7 @@ class CityModel(Model):
             goal = (0, 0)  # Change to destination
 
             # Load the map file. The map file is a text file where each character represents an agent.
-            with open('city_files/2022_base.txt') as baseFile:
+            with open('city_files/2022modified.txt') as baseFile:
                 lines = baseFile.readlines()
                 self.width = len(lines[0]) - 1
                 self.height = len(lines)
@@ -33,7 +33,7 @@ class CityModel(Model):
                 # Goes through each character in the map file and creates the corresponding agent.
                 for r, row in enumerate(lines):
                     for c, col in enumerate(row):
-                        if col in ["v", "^", ">", "<", "@"]:
+                        if col in ["v", "^", ">", "<", "*","I","X","@"]:
                             agent = Road(f"r_{r * self.width + c}", self, dataDictionary[col])
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             graph.add_node((c, self.height - r - 1), direction=col)  # Add direction as an attribute
@@ -80,7 +80,7 @@ class CityModel(Model):
                 # x1,y1 = neighbor_node
 
                 # UP
-                if graph.nodes[node]['direction'] == "^":
+                if graph.nodes[node]['direction'] == "^" or graph.nodes[node]['direction'] == "@":
                     if (x, y + 1) in graph.nodes and 'signal_type' in graph.nodes[(x, y + 1)]:
                         if graph.nodes[(x, y + 1)]['signal_type'] == "long" or graph.nodes[(x, y + 1)]['signal_type'] == "short":
                             neighbors = [
@@ -106,7 +106,7 @@ class CityModel(Model):
                                 graph.add_edge(node, neighbor, weight=direction)
                 
                 #DOWN
-                if graph.nodes[node]['direction'] == "v":
+                if graph.nodes[node]['direction'] == "v" or graph.nodes[node]['direction'] == "*":
                     if (x, y - 1) in graph.nodes and 'signal_type' in graph.nodes[(x, y -1)]:
                         if graph.nodes[(x, y - 1)]['signal_type'] == "long" or graph.nodes[(x, y - 1)]['signal_type'] == "short":
                             neighbors = [
@@ -134,7 +134,7 @@ class CityModel(Model):
                                 graph.add_edge(node, neighbor, weight=direction)
                 
                 #LEFT
-                if graph.nodes[node]['direction'] == "<":
+                if graph.nodes[node]['direction'] == "<" or graph.nodes[node]['direction'] == "I":
                     if (x - 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x - 1, y)]:
                         if graph.nodes[(x - 1, y)]['signal_type'] == "long" or graph.nodes[(x - 1, y)]['signal_type'] == "short":
                             neighbors = [
@@ -159,7 +159,7 @@ class CityModel(Model):
                                 direction = graph.nodes[node]['direction']
                                 graph.add_edge(node, neighbor, weight=direction)
                 #Right
-                if graph.nodes[node]['direction'] == ">":
+                if graph.nodes[node]['direction'] == ">" or graph.nodes[node]['direction'] == "X":
                     if (x + 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x + 1, y)]:
                         if graph.nodes[(x + 1, y)]['signal_type'] == "long" or graph.nodes[(x + 1, y)]['signal_type'] == "short":
                             neighbors = [
@@ -174,15 +174,26 @@ class CityModel(Model):
                                     # graph.add_edge(neighbor, (x - 2, y), weight=direction)
                             graph.add_edge((x + 1, y), (x + 2, y), weight=direction)
                     else:
-                        neighbors = [
-                            (x + 1, y + 1),
+                        if (x==12 and y==9) or(x==11 and y==9):
+                            neighbors = [
                             (x + 1, y - 1),
                             (x + 1, y)
-                        ]
-                        for neighbor in neighbors:
-                            if neighbor in graph.nodes:
-                                direction = graph.nodes[node]['direction']
-                                graph.add_edge(node, neighbor, weight=direction)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    graph.add_edge(node, neighbor, weight=direction)
+                
+                        else:
+                            neighbors = [
+                                (x + 1, y + 1),
+                                (x + 1, y - 1),
+                                (x + 1, y)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    graph.add_edge(node, neighbor, weight=direction)
                 
                 # if graph.nodes[node]['direction'] == "<":
                 #     neighbors = [

@@ -19,6 +19,7 @@ class Car(Agent):
         self.graph=graph
         self.initialPos = (0,0)
         self.goal = goal
+        self.light=0
 
     def move(self):
         """ 
@@ -38,6 +39,7 @@ class Car(Agent):
         RoadSpacesRight = list(map(self.road_right, possible_steps))
         RoadSpacesLeft = list(map(self.road_left, possible_steps))
         ObstacleSpaces = list(map(self.building, possible_steps))
+        CarSpaces = list(map(self.checkCar, possible_steps))
         # #Checks which grid cells have no agent.
         # agentSpaces = list(map(self.agentcheck, possible_steps))
         # #Checks which grid cells have not been visited.
@@ -50,23 +52,29 @@ class Car(Agent):
         next_move_road_right = [p for p,f in zip(possible_steps, RoadSpacesRight) if f == True]
         next_move_road_left = [p for p,f in zip(possible_steps, RoadSpacesLeft) if f == True]
         next_move_obstacle = [p for p,f in zip(possible_steps, ObstacleSpaces) if f == True]
-        
+        next_move_car = [p for p,f in zip(possible_steps, CarSpaces) if f == True]
+       
         # Cuando el agente esta sobre un semaforo todavía no funciona. 
-        if len(next_move_s) > 0:
-            print("green Light")
-            next_move = self.random.choice(next_move_s)
-            
-            self.model.grid.move_agent(self, next_move)
-            return
+        
+        
+        #Se encarga de revisar si existe un coche en ese lugar
+        # if len(next_move_car) > 0:
+        #     next_move = self.random.choice(next_move_car) 
+        #     print("pos", "Nextmove",next_move)
+        #     #decrement patience in the car. The car must wait.
+        #     self.model.grid.move_agent(self, next_move)
+        #     return
+        
         #Se encarga de mover hacia la derecha
         if len(next_move_road_right) > 0:
             next_move = self.random.choice(next_move_road_right) 
             print("pos", "Nextmove",next_move)
             x,y=next_move
+            self.lastDirection="Right"
             self.model.grid.move_agent(self, (x,y))
             return
         
-        #Se encarga de mover hacia la derecha
+        #Se encarga de mover hacia la izquierda
         if len(next_move_road_left) > 0:
             next_move = self.random.choice(next_move_road_left) 
             print("pos", "Nextmove",next_move)
@@ -87,15 +95,27 @@ class Car(Agent):
             x,y=next_move
             self.model.grid.move_agent(self, (x,y))
             return
+        if len(next_move_s) > 0 and self.light==0:
+            print("green Light")
+            next_move = self.random.choice(next_move_s)
+            x,y=next_move
+            self.model.grid.move_agent(self, (x,y))
+            #self.light=1
+            return True
+        if len(next_move_S) > 0 and self.light==0:
+            print("green Light")
+            next_move = self.random.choice(next_move_S)
+            x,y=next_move
+            self.model.grid.move_agent(self, (x,y))
+            #self.light=1
+            return True
+    
            
-    def checktrafficLight(self, pos):
+    def checkCar(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
-        x,y=self.pos
-        x1, y1=pos
         for agent in contents:
-            if isinstance(agent, Road):
-                if agent.po
-                return agent.state
+            if isinstance(agent, Car):
+                return True
         return False 
 
     def trafficLight_s(self, pos):
@@ -211,6 +231,7 @@ class Car(Agent):
         Determines the new direction it will take, and then moves
         """
         self.move()
+            
         # self.a_star_search(self.graph,(0,0), self.goal)
 
 class Traffic_Light(Agent):
