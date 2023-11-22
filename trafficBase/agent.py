@@ -7,7 +7,7 @@ class Car(Agent):
         unique_id: Agent's ID 
         direction: Randomly chosen direction chosen from one of eight directions
     """
-    def __init__(self, unique_id, model):
+    def __init__(self, unique_id, model,graph):
         """
         Creates a new random agent.
         Args:
@@ -15,6 +15,7 @@ class Car(Agent):
             model: Model reference for the agent
         """
         super().__init__(unique_id, model)
+        self.graph=graph
 
     def move(self):
         """ 
