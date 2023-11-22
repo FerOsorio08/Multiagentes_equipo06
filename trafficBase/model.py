@@ -22,7 +22,7 @@ class CityModel(Model):
             goal = (0, 0)  # Change to destination
 
             # Load the map file. The map file is a text file where each character represents an agent.
-            with open('city_files/2022_base.txt') as baseFile:
+            with open('city_files/2022modified.txt') as baseFile:
                 lines = baseFile.readlines()
                 self.width = len(lines[0]) - 1
                 self.height = len(lines)
