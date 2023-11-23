@@ -251,15 +251,18 @@ class CityModel(Model):
 
     def create_agent(self):
         i = self.num_agents
-        place = self.placeofBirth[randint(0,3)]
+        place = self.placeofBirth[randint(0, 3)]
         print("place of birth: ", place)
-        self.goal = self.destinationList[randint(0,9)]
+        self.goal = self.destinationList[randint(0, 9)]
         print("goal: ", self.goal)
         agent = Car(i, self, self.graph, self.goal)
-        if self.grid.is_cell_empty(place):
-            self.grid.place_agent(agent, place)
+        
+        # Check if the cell is empty before placing the agent
+        
+        self.grid.place_agent(agent, place)
         self.schedule.add(agent)
         self.num_agents -= 1
+        
 
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
