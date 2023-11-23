@@ -5,7 +5,7 @@ from agent import *
 import json
 import networkx as nx
 import matplotlib.pyplot as plt
-
+from random import randint
 class CityModel(Model):
     """ 
         Creates a model based on a city map.
@@ -61,7 +61,8 @@ class CityModel(Model):
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             graph.add_node((c, self.height - r - 1), direction=None)  # No direction for destination
                             goal = (c, self.height - r - 1)
-                            print("goal: ", goal)
+                            self.destinationList.append(goal)
+                            # print("goal: ", goal)
 
 
             # Add directed edges for neighboring intersections with direction as weight
@@ -250,8 +251,13 @@ class CityModel(Model):
 
     def create_agent(self):
         i = self.num_agents
-        agent = Car(i, self, self.graph,self.goal)
-        self.grid.place_agent(agent, (0,0))
+        place = self.placeofBirth[randint(0,3)]
+        print("place of birth: ", place)
+        self.goal = self.destinationList[randint(0,9)]
+        print("goal: ", self.goal)
+        agent = Car(i, self, self.graph, self.goal)
+        if self.grid.is_cell_empty(place):
+            self.grid.place_agent(agent, place)
         self.schedule.add(agent)
         self.num_agents -= 1
 
