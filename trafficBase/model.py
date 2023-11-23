@@ -5,7 +5,7 @@ from agent import *
 import json
 import networkx as nx
 import matplotlib.pyplot as plt
-
+from random import randint
 class CityModel(Model):
     """ 
         Creates a model based on a city map.
@@ -18,8 +18,12 @@ class CityModel(Model):
             dataDictionary = json.load(open("city_files/mapDictionary.json"))
 
             self.traffic_lights = []
+            self.graph = None
             graph = nx.DiGraph()  # Change to directed graph
-            goal = (0, 0)  # Change to destination
+            self.goal = (0, 0)  # Change to destination
+            self.destinationList = []
+            self.placeofBirth=[(0,0),(0,23),(23,0),(23,23)]
+
 
             # Load the map file. The map file is a text file where each character represents an agent.
             with open('city_files/2022modified.txt') as baseFile:
@@ -57,7 +61,8 @@ class CityModel(Model):
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             graph.add_node((c, self.height - r - 1), direction=None)  # No direction for destination
                             goal = (c, self.height - r - 1)
-                            print("goal: ", goal)
+                            self.destinationList.append(goal)
+                            # print("goal: ", goal)
 
 
             # Add directed edges for neighboring intersections with direction as weight
@@ -231,16 +236,30 @@ class CityModel(Model):
                 #             graph.add_edge(node, neighbor, weight=direction)
 
             self.num_agents = N
+            self.graph = graph
+            self.goal = goal
 
             # Creates the cars
-            for i in range(1):
-                agent = Car(i, self, graph,goal)
-                # print("graph: ", graph.nodes)
-                self.grid.place_agent(agent, (0, 0))
-                self.schedule.add(agent)
+            # for i in range(1):
+            #     agent = Car(i, self, self.graph, self.goal)
+            #     # print("graph: ", graph.nodes)
+            #     self.grid.place_agent(agent, (0, 0))
+            #     self.schedule.add(agent)
 
             self.running = True
-            #self.plot_graph(graph)
+            # self.plot_graph(graph)
+
+    def create_agent(self):
+        i = self.num_agents
+        place = self.placeofBirth[randint(0,3)]
+        print("place of birth: ", place)
+        self.goal = self.destinationList[randint(0,9)]
+        print("goal: ", self.goal)
+        agent = Car(i, self, self.graph, self.goal)
+        if self.grid.is_cell_empty(place):
+            self.grid.place_agent(agent, place)
+        self.schedule.add(agent)
+        self.num_agents -= 1
 
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
@@ -252,3 +271,6 @@ class CityModel(Model):
     def step(self):
         '''Advance the model by one step.'''
         self.schedule.step()
+        print("step", self.schedule.steps)
+        if (self.schedule.steps%10 == 0) or self.schedule.steps == 1:
+            self.create_agent()
