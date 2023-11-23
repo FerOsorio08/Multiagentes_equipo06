@@ -263,6 +263,11 @@ class Car(Agent):
         (x1, y1) = a
         (x2, y2) = b
         return abs(x1 - x2) + abs(y1 - y2)
+
+    #Function to delete agents once they reach their goal
+    def deleteAgent(self):
+        self.model.grid.remove_agent(self)
+        self.model.schedule.remove(self)
     
     def step(self):
         """ 
@@ -276,6 +281,8 @@ class Car(Agent):
             self.move()
         elif self.path is not None and len(self.path) > 0:
             self.move()
+            if self.pos == self.goal:
+                self.deleteAgent()
             print("found path", self.path)
         else:
             # If the path is empty, find a new path
