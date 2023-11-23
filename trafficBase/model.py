@@ -74,6 +74,16 @@ class CityModel(Model):
             #             direction = graph.nodes[node]['direction']
             #             # print("direction: ", direction)
             #             graph.add_edge(node, neighbor, weight=direction)
+            direction_weights = {
+                "v": 1,
+                "^": 2,
+                ">": 3,
+                "<": 4,
+                "*": 1,
+                "I": 4,
+                "X": 3,
+                "@": 2
+            }
             
             for node in graph.nodes:
                 x, y = node
@@ -91,9 +101,11 @@ class CityModel(Model):
                             for neighbor in neighbors:
                                 if neighbor in graph.nodes:
                                     direction = graph.nodes[node]['direction']
-                                    graph.add_edge(node, neighbor, weight=direction)
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                                     # graph.add_edge(neighbor, (x, y - 2), weight=direction)
-                            graph.add_edge((x, y + 1), (x, y + 2), weight=direction)
+                            weight = direction_weights.get(direction, 0) 
+                            graph.add_edge((x, y + 1), (x, y + 2), weight=weight)
                     else:
                         neighbors = [
                             (x + 1, y + 1),
@@ -103,7 +115,8 @@ class CityModel(Model):
                         for neighbor in neighbors:
                             if neighbor in graph.nodes:
                                 direction = graph.nodes[node]['direction']
-                                graph.add_edge(node, neighbor, weight=direction)
+                                weight = direction_weights.get(direction, 0) 
+                                graph.add_edge(node, neighbor, weight=weight)
                 
                 #DOWN
                 if graph.nodes[node]['direction'] == "v" or graph.nodes[node]['direction'] == "*":
@@ -117,10 +130,12 @@ class CityModel(Model):
                             for neighbor in neighbors:
                                 if neighbor in graph.nodes:
                                     direction = graph.nodes[node]['direction']
-                                    graph.add_edge(node, neighbor, weight=direction)
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                                     #add next edge to S node
                                     # graph.add_edge(neighbor, (x, y + 2), weight=direction)
-                            graph.add_edge((x, y - 1), (x, y - 2), weight=direction)
+                            weight = direction_weights.get(direction, 0) 
+                            graph.add_edge((x, y - 1), (x, y - 2), weight=weight)
                                 
                     else:
                         neighbors = [
@@ -131,7 +146,8 @@ class CityModel(Model):
                         for neighbor in neighbors:
                             if neighbor in graph.nodes:
                                 direction = graph.nodes[node]['direction']
-                                graph.add_edge(node, neighbor, weight=direction)
+                                weight = direction_weights.get(direction, 0) 
+                                graph.add_edge(node, neighbor, weight=weight)
                 
                 #LEFT
                 if graph.nodes[node]['direction'] == "<" or graph.nodes[node]['direction'] == "I":
@@ -145,9 +161,11 @@ class CityModel(Model):
                             for neighbor in neighbors:
                                 if neighbor in graph.nodes:
                                     direction = graph.nodes[node]['direction']
-                                    graph.add_edge(node, neighbor, weight=direction)
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                                     # graph.add_edge(neighbor, (x + 2, y), weight=direction)
-                            graph.add_edge((x - 1, y), (x - 2, y), weight=direction)
+                            weight = direction_weights.get(direction, 0) 
+                            graph.add_edge((x - 1, y), (x - 2, y), weight=weight)
                     else:
                         neighbors = [
                             (x - 1, y + 1),
@@ -157,7 +175,8 @@ class CityModel(Model):
                         for neighbor in neighbors:
                             if neighbor in graph.nodes:
                                 direction = graph.nodes[node]['direction']
-                                graph.add_edge(node, neighbor, weight=direction)
+                                weight = direction_weights.get(direction, 0) 
+                                graph.add_edge(node, neighbor, weight=weight)
                 #Right
                 if graph.nodes[node]['direction'] == ">" or graph.nodes[node]['direction'] == "X":
                     if (x + 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x + 1, y)]:
@@ -170,9 +189,11 @@ class CityModel(Model):
                             for neighbor in neighbors:
                                 if neighbor in graph.nodes:
                                     direction = graph.nodes[node]['direction']
-                                    graph.add_edge(node, neighbor, weight=direction)
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                                     # graph.add_edge(neighbor, (x - 2, y), weight=direction)
-                            graph.add_edge((x + 1, y), (x + 2, y), weight=direction)
+                            weight = direction_weights.get(direction, 0) 
+                            graph.add_edge((x + 1, y), (x + 2, y), weight=weight)
                     else:
                         if (x==12 and y==9) or(x==11 and y==9):
                             neighbors = [
@@ -182,7 +203,8 @@ class CityModel(Model):
                             for neighbor in neighbors:
                                 if neighbor in graph.nodes:
                                     direction = graph.nodes[node]['direction']
-                                    graph.add_edge(node, neighbor, weight=direction)
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                 
                         else:
                             neighbors = [
@@ -193,7 +215,8 @@ class CityModel(Model):
                             for neighbor in neighbors:
                                 if neighbor in graph.nodes:
                                     direction = graph.nodes[node]['direction']
-                                    graph.add_edge(node, neighbor, weight=direction)
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                 
                 # if graph.nodes[node]['direction'] == "<":
                 #     neighbors = [
@@ -221,6 +244,8 @@ class CityModel(Model):
 
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
+        #unflip y-axis
+        pos = {node: (node[0], node[1]) for node in graph.nodes}
         nx.draw(graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
         plt.show()
 
