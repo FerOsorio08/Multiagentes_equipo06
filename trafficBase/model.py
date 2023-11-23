@@ -261,7 +261,6 @@ class CityModel(Model):
         self.schedule.add(agent)
         self.num_agents -= 1
 
-
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
         #unflip y-axis
