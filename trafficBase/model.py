@@ -240,7 +240,7 @@ class CityModel(Model):
                 self.schedule.add(agent)
 
             self.running = True
-            self.plot_graph(graph)
+            #self.plot_graph(graph)
 
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
