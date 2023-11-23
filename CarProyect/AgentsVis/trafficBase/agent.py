@@ -275,9 +275,9 @@ class Car(Agent):
         """
         print(self.pos)
         if self.count==0:
-            #self.path = self.a_star_search(self.graph, self.pos, self.goal)
+            self.path = self.a_star_search(self.graph, self.pos, self.goal)
             self.count=1
-            #self.path.pop(0)
+            self.path.pop(0)
             self.move()
         elif self.path is not None and len(self.path) > 0:
             self.move()
