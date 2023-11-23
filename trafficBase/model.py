@@ -18,6 +18,7 @@ class CityModel(Model):
             dataDictionary = json.load(open("city_files/mapDictionary.json"))
 
             self.traffic_lights = []
+            self.graph=None
             graph = nx.DiGraph()  # Change to directed graph
             goal = (0, 0)  # Change to destination
             self.destinationList = []
@@ -234,7 +235,7 @@ class CityModel(Model):
                 #             graph.add_edge(node, neighbor, weight=direction)
 
             self.num_agents = N
-
+            self.graph= graph
             # Creates the cars
             for i in range(1):
                 agent = Car(i, self, graph,goal)
@@ -243,7 +244,17 @@ class CityModel(Model):
                 self.schedule.add(agent)
 
             self.running = True
-            self.plot_graph(graph)
+            #self.plot_graph(graph)
+            
+    def createCars(self):
+        random1=randint(0,13)
+        self.goal=self.destinationList[random1]
+        agent = Car(self, self.graph, self.goal, self.goal)
+                # print("graph: ", graph.nodes)
+        random=randint(0,3)
+        birth=self.placeofBirth[random]
+        self.grid.place_agent(agent, birth)
+        self.schedule.add(agent)
 
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
@@ -256,3 +267,4 @@ class CityModel(Model):
     def step(self):
         '''Advance the model by one step.'''
         self.schedule.step()
+        self.createCars()

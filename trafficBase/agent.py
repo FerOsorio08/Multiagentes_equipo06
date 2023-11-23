@@ -25,6 +25,7 @@ class Car(Agent):
         self.count=0
         self.path=[]
         self.patience=randint(1, 10)
+        #self.model_height = model.height
 
     def move(self):
         """ 
@@ -33,7 +34,7 @@ class Car(Agent):
         possible_steps = self.model.grid.get_neighborhood(
             self.pos,
             moore=True, # Boolean for whether to use Moore neighborhood (including diagonals) or Von Neumann (only up/down/left/right).
-            include_center=True)       
+            include_center=True) 
         # Checks which grid has traffic light "s"
         trafficLighspace_s= list(map(self.trafficLight_s, possible_steps))
          # Checks which grid has traffic light "S"
