@@ -20,6 +20,8 @@ class CityModel(Model):
             self.traffic_lights = []
             graph = nx.DiGraph()  # Change to directed graph
             goal = (0, 0)  # Change to destination
+            self.destinationList = []
+            self.placeofBirth=[(0,0),(0,23),(23,0),(23,23)]
 
             # Load the map file. The map file is a text file where each character represents an agent.
             with open('city_files/2022modified.txt') as baseFile:
@@ -58,6 +60,7 @@ class CityModel(Model):
                             graph.add_node((c, self.height - r - 1), direction=None)  # No direction for destination
                             goal = (c, self.height - r - 1)
                             print("goal: ", goal)
+                            self.destinationList.append(goal)
 
 
             # Add directed edges for neighboring intersections with direction as weight
@@ -248,6 +251,7 @@ class CityModel(Model):
         pos = {node: (node[0], node[1]) for node in graph.nodes}
         nx.draw(graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
         plt.show()
+        
 
     def step(self):
         '''Advance the model by one step.'''
