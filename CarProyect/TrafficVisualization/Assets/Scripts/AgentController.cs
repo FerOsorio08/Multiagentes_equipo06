@@ -32,6 +32,20 @@ public class AgentData
         this.z = z;
     }
 }
+public class TrafficLight
+{
+    public string id, state;
+    public float x, y, z;
+
+    public TrafficLight(string id, float x, float y, float z,string state)
+    {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.state = state;
+    }
+}
 
 [Serializable]
 
@@ -46,6 +60,13 @@ public class AgentsData
     public List<AgentData> positions;
 
     public AgentsData() => this.positions = new List<AgentData>();
+}
+
+public class TrafficDatas
+{
+    public List<TrafficLight> positions;
+
+    public TrafficDatas() => this.positions = new List<TrafficLight>();
 }
 
 public class AgentController : MonoBehaviour
@@ -82,6 +103,8 @@ public class AgentController : MonoBehaviour
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentsData agentsData, obstacleData;
+
+    TrafficDatas trafficData;
     Dictionary<string, GameObject> agents;
     Dictionary<string, Vector3> prevPositions, currPositions;
 
@@ -95,15 +118,12 @@ public class AgentController : MonoBehaviour
     void Start()
     {
         agentsData = new AgentsData();
-        obstacleData = new AgentsData();
+        trafficData = new TrafficDatas();
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
         agents = new Dictionary<string, GameObject>();
-
-        floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
-        floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
         
         timer = timeToUpdate;
 
@@ -123,21 +143,10 @@ public class AgentController : MonoBehaviour
         if (updated)
         {
             timer -= Time.deltaTime;
-            dt = 1.0f - (timer / timeToUpdate);
 
             // Iterates over the agents to update their positions.
             // The positions are interpolated between the previous and current positions.
-            foreach(var agent in currPositions)
-            {
-                Vector3 currentPosition = agent.Value;
-                Vector3 previousPosition = prevPositions[agent.Key];
-
-                Vector3 interpolated = Vector3.Lerp(previousPosition, currentPosition, dt);
-                Vector3 direction = currentPosition - interpolated;
-
-                agents[agent.Key].transform.localPosition = interpolated;
-                if(direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction);
-            }
+            
 
             // float t = (timer / timeToUpdate);
             // dt = t * t * ( 3f - 2f*t);
@@ -186,14 +195,13 @@ public class AgentController : MonoBehaviour
 
             // Once the configuration has been sent, it launches a coroutine to get the agents data.
             StartCoroutine(GetAgentsData());
-            StartCoroutine(GetObstacleData());
+            StartCoroutine(GetTrafficData());
         }
     }
 
     IEnumerator GetAgentsData() 
     {
         // The GetAgentsData method is used to get the agents data from the server.
-
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getAgentsEndpoint);
         yield return www.SendWebRequest();
  
@@ -208,27 +216,29 @@ public class AgentController : MonoBehaviour
             foreach(AgentData agent in agentsData.positions)
             {
                 Vector3 newAgentPosition = new Vector3(agent.x, agent.y, agent.z);
-
-                    if(!started)
-                    {
-                        prevPositions[agent.id] = newAgentPosition;
-                        agents[agent.id] = Instantiate(agentPrefab, newAgentPosition, Quaternion.identity);
-                    }
-                    else
+                    if(!agents.ContainsKey(agent.id))
                     {
                         Vector3 currentPosition = new Vector3();
                         if(currPositions.TryGetValue(agent.id, out currentPosition))
                             prevPositions[agent.id] = currentPosition;
                         currPositions[agent.id] = newAgentPosition;
                     }
+                    else
+                    {
+                        prevPositions[agent.id] = newAgentPosition;
+                        agents[agent.id] = Instantiate(agentPrefab, newAgentPosition, Quaternion.identity);
+                    }
             }
-
             updated = true;
             if(!started) started = true;
         }
     }
 
-    IEnumerator GetObstacleData() 
+    // traffic light si solo al inicio
+    //hacer script para cambiar la luz del semadforo
+    // desde aqui se accese al estado del semaforo y se llaman los metodos para cambiarlo
+
+    IEnumerator GetTrafficData() 
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
         yield return www.SendWebRequest();
