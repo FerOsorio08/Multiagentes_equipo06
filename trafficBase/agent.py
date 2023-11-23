@@ -72,7 +72,9 @@ class Car(Agent):
             print("pos", "Nextmove",next_move)
             x,y=next_move
             self.lastDirection="Right"
-            self.model.grid.move_agent(self, (x,y))
+            if (x,y) in self.path:
+                self.model.grid.move_agent(self, (x,y))
+            # self.model.grid.move_agent(self, (x,y))
             return
         
         #Se encarga de mover hacia la izquierda
@@ -80,34 +82,44 @@ class Car(Agent):
             next_move = self.random.choice(next_move_road_left) 
             print("pos", "Nextmove",next_move)
             x,y=next_move
-            self.model.grid.move_agent(self, (x,y))
+            if (x,y) in self.path:
+                self.model.grid.move_agent(self, (x,y))
+            # self.model.grid.move_agent(self, (x,y))
             return
         #Se encarga de mover hacia abajo
         if len(next_move_road_down) > 0:
             next_move = self.random.choice(next_move_road_down) 
             print("pos", "Nextmove",next_move)
             x,y=next_move
-            self.model.grid.move_agent(self, (x,y))
+            if (x,y) in self.path:
+                self.model.grid.move_agent(self, (x,y))
+            # self.model.grid.move_agent(self, (x,y))
             return
         #Se encarga de mover hacia arriba
         if len(next_move_road_up) > 0:
             next_move = self.random.choice(next_move_road_up) 
             print("pos", "Nextmove",next_move)
             x,y=next_move
-            self.model.grid.move_agent(self, (x,y))
+            if (x,y) in self.path:
+                self.model.grid.move_agent(self, (x,y))
+            # self.model.grid.move_agent(self, (x,y))
             return
         if len(next_move_s) > 0 and self.light==0:
             print("green Light")
             next_move = self.random.choice(next_move_s)
             x,y=next_move
-            self.model.grid.move_agent(self, (x,y))
+            if (x,y) in self.path:
+                self.model.grid.move_agent(self, (x,y))
+            # self.model.grid.move_agent(self, (x,y))
             #self.light=1
             return True
         if len(next_move_S) > 0 and self.light==0:
             print("green Light")
             next_move = self.random.choice(next_move_S)
             x,y=next_move
-            self.model.grid.move_agent(self, (x,y))
+            if (x,y) in self.path:
+                self.model.grid.move_agent(self, (x,y))
+            # self.model.grid.move_agent(self, (x,y))
             #self.light=1
             return True
     
@@ -231,9 +243,10 @@ class Car(Agent):
         """ 
         Determines the new direction it will take, and then moves
         """
-        if self.path is not None and len(self.path) > 1:
-            next_pos = self.path.pop(0)
-            self.model.grid.move_agent(self, next_pos)
+        self.path = self.a_star_search(self.graph, self.pos, self.goal)
+        if self.path is not None and len(self.path) > 0:
+            self.move()
+            
         else:
             # If the path is empty, find a new path
             self.path = self.a_star_search(self.graph, self.pos, self.goal)
