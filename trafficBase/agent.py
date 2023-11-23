@@ -20,6 +20,7 @@ class Car(Agent):
         self.initialPos = (0,0)
         self.goal = goal
         self.light=0
+        self.path = None  # Store the path
 
     def move(self):
         """ 
@@ -230,9 +231,13 @@ class Car(Agent):
         """ 
         Determines the new direction it will take, and then moves
         """
-        self.move()
-            
-        # self.a_star_search(self.graph,(0,0), self.goal)
+        if self.path is not None and len(self.path) > 1:
+            next_pos = self.path.pop(0)
+            self.model.grid.move_agent(self, next_pos)
+        else:
+            # If the path is empty, find a new path
+            self.path = self.a_star_search(self.graph, self.pos, self.goal)
+
 
 class Traffic_Light(Agent):
     """
