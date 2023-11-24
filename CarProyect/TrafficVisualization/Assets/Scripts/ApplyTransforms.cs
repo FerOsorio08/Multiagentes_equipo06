@@ -39,7 +39,7 @@ public class ApplyTransforms : MonoBehaviour
     float motionTime=10;
     Vector3 startPosition;
     Vector3 endPosition;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -222,6 +222,7 @@ public class ApplyTransforms : MonoBehaviour
         return T;
     }
 
+    //Como se hace get position? Que tiene que ver con el api?
     // public getPosition(){
     //     //swap variables de donde estas y a donde vas.
 
