@@ -10,10 +10,13 @@ public class CityMaker : MonoBehaviour
     [SerializeField] GameObject semaphorePrefab;
     [SerializeField] int tileSize;
 
+    [SerializeField] GameObject carPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
         MakeTiles(layout.text);
+        GameObject car = Instantiate(carPrefab, new Vector3(0, 0, 0), Quaternion.identity);
     }
 
     // Update is called once per frame

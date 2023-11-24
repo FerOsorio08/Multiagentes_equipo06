@@ -1,7 +1,3 @@
-//Lucía Barrenechea
-//13 de noviembre del 2023
-//Descripción: Este script aplica las transformaciones a un objeto. Simula el movimiento de un auto y sus llantas.
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,70 +5,105 @@ using UnityEngine;
 public class ApplyTransforms : MonoBehaviour
 {
     [SerializeField] Vector3 displacement;
-    [SerializeField]float scale;
-    //[SerializeField]float angle;
+    [SerializeField]float angle;
     [SerializeField]AXIS rotationAxis;
-    [SerializeField]AXIS wheelAxis;
-    [SerializeField] GameObject wheelobj1;
-    [SerializeField] GameObject wheelobj2;
-    [SerializeField] GameObject wheelobj3;
-    [SerializeField] GameObject wheelobj4;
-    Mesh mesh;
-    Mesh wheel1;
-    Mesh wheel2;
-    Mesh wheel3;
-    Mesh wheel4;
+    [SerializeField] GameObject wheelPrefab;
+
+    GameObject wheel1;
+    GameObject wheel2;
+    GameObject wheel3;
+    GameObject wheel4;
+
+    Mesh [] mesh;
+    Mesh wheel1Mesh;
+    Mesh wheel2Mesh;
+    Mesh wheel3Mesh;
+    Mesh wheel4Mesh;
+
     Vector3[] baseVertices;
-    Vector3[] baseVerticesw1;
-    Vector3[] baseVerticesw2;
-    Vector3[] baseVerticesw3;
-    Vector3[] baseVerticesw4;
     Vector3[] newVertices;
-    Vector3[] newVerticesw1;
-    Vector3[] newVerticesw2;
-    Vector3[] newVerticesw3;
-    Vector3[] newVerticesw4;
+
+    Vector3[] spoilerVertices;
+    Vector3[] spoilerNewVertices;
+    Vector3[] wheel1Vertices;
+    Vector3[] wheel1NewVertices;
+    Vector3[] wheel2Vertices;
+    Vector3[] wheel2NewVertices;
+    Vector3[] wheel3Vertices;
+    Vector3[] wheel3NewVertices;
+    Vector3[] wheel4Vertices;
+    Vector3[] wheel4NewVertices;
+
+    float T;
+    float currentTime=0;
+    float motionTime=10;
+    Vector3 startPosition;
+    Vector3 endPosition;
+
     // Start is called before the first frame update
     void Start()
     {
-        mesh = GetComponentInChildren<MeshFilter>().mesh;
-        wheel1 = wheelobj1.GetComponentInChildren<MeshFilter>().mesh;
-        wheel2 = wheelobj2.GetComponentInChildren<MeshFilter>().mesh;
-        wheel3 = wheelobj3.GetComponentInChildren<MeshFilter>().mesh;
-        wheel4 = wheelobj4.GetComponentInChildren<MeshFilter>().mesh;
-        baseVertices = mesh.vertices;
-        baseVerticesw1 = wheel1.vertices;
-        baseVerticesw2 = wheel2.vertices;
-        baseVerticesw3 = wheel3.vertices;
-        baseVerticesw4 = wheel4.vertices;
+        MeshFilter [] meshfilters = GetComponentsInChildren<MeshFilter>();
+        mesh = new Mesh[meshfilters.Length];
+        for (int i = 0; i < meshfilters.Length; i++)
+        {
+            mesh[i] = meshfilters[i].mesh;
+        }
+        wheel1 = Instantiate(wheelPrefab, transform);
+        wheel2 = Instantiate(wheelPrefab, transform);
+        wheel3 = Instantiate(wheelPrefab, transform);
+        wheel4 = Instantiate(wheelPrefab, transform);
+        
+        wheel1Mesh = wheel1.GetComponentInChildren<MeshFilter>().mesh;
+        wheel2Mesh = wheel2.GetComponentInChildren<MeshFilter>().mesh;
+        wheel3Mesh = wheel3.GetComponentInChildren<MeshFilter>().mesh;
+        wheel4Mesh = wheel4.GetComponentInChildren<MeshFilter>().mesh;
+
+        baseVertices = mesh[0].vertices;
+        spoilerVertices = mesh[1].vertices;
+        wheel1Vertices = wheel1Mesh.vertices;
+        wheel2Vertices = wheel2Mesh.vertices;
+        wheel3Vertices = wheel3Mesh.vertices;
+        wheel4Vertices = wheel4Mesh.vertices;
 
         newVertices = new Vector3[baseVertices.Length];
         for (int i = 0; i < baseVertices.Length; i++)
         {
             newVertices[i] = baseVertices[i];
         }
-        
-        newVerticesw1 = new Vector3[baseVerticesw1.Length];
-        for (int i = 0; i < baseVerticesw1.Length; i++)
-        {
-            newVerticesw1[i] = baseVerticesw1[i];
-        } 
-        newVerticesw2 = new Vector3[baseVerticesw2.Length];
-        for (int i = 0; i < baseVerticesw2.Length; i++)
-        {
-            newVerticesw2[i] = baseVerticesw2[i];
-        } 
-        newVerticesw3 = new Vector3[baseVerticesw3.Length];
-        for (int i = 0; i < baseVerticesw3.Length; i++)
-        {
-            newVerticesw3[i] = baseVerticesw3[i];
-        } 
 
-        newVerticesw4 = new Vector3[baseVerticesw4.Length];
-         for (int i = 0; i < baseVerticesw4.Length; i++)
+        spoilerNewVertices = new Vector3[spoilerVertices.Length];
+        for (int i = 0; i < spoilerVertices.Length; i++)
         {
-            newVerticesw4[i] = baseVerticesw4[i];
-        } 
+            spoilerNewVertices[i] = spoilerVertices[i];
+        }
+
+        wheel1NewVertices = new Vector3[wheel1Vertices.Length];
+        for (int i = 0; i < wheel1Vertices.Length; i++)
+        {
+            wheel1NewVertices[i] = wheel1Vertices[i];
+        }
+
+        wheel2NewVertices = new Vector3[wheel2Vertices.Length];
+        for (int i = 0; i < wheel2Vertices.Length; i++)
+        {
+            wheel2NewVertices[i] = wheel2Vertices[i];
+        }
+
+        wheel3NewVertices = new Vector3[wheel3Vertices.Length];
+        for (int i = 0; i < wheel3Vertices.Length; i++)
+        {
+            wheel3NewVertices[i] = wheel3Vertices[i];
+        }
+
+        wheel4NewVertices = new Vector3[wheel4Vertices.Length];
+        for (int i = 0; i < wheel4Vertices.Length; i++)
+        {
+            wheel4NewVertices[i] = wheel4Vertices[i];
+        }
+        
+        
+        
     }
 
     // Update is called once per frame
@@ -82,79 +113,101 @@ public class ApplyTransforms : MonoBehaviour
     }
 
     void DoTransform(){
-        T=getT();
+         T=getT();
         Vector3 newposition=PositionLerp(startPosition, endPosition, T);
-        //Calulate the angle of rotation
-        float anglerad = Mathf.Atan2(displacement.z, displacement.x);
-        float angle = anglerad * Mathf.Rad2Deg -90;
-        Debug.Log(angle);
         //create the matrices
-        Matrix4x4 move= HW_Transforms.TranslationMat(newposition.x  , newposition.y , newposition.z);
-        //HAcer otra función que tome posición iniical y final y que tiempo hay entre 0 y 1
-        //Matrix4x4 move= HW_Transforms.TranslationMat(-displacement.x  , -displacement.y , -displacement.z );
+
+        // Calculate the angle in radians
+        float angleRadians = Mathf.Atan2(displacement.z, displacement.x);
+
+        // Convert the angle to degrees
+        float angleDegrees = angleRadians * Mathf.Rad2Deg -90;
+        Matrix4x4 move= HW_Transforms.TranslationMat(displacement.x *Time.time , displacement.y *Time.time, displacement.z *Time.time);
         Matrix4x4 moveOrigin = HW_Transforms.TranslationMat(-displacement.x, -displacement.y, -displacement.z);
         Matrix4x4 moveObject = HW_Transforms.TranslationMat(displacement.x, displacement.y, displacement.z);
-        Matrix4x4 rotate = HW_Transforms.RotateMat(angle , rotationAxis);
+        Matrix4x4 rotate = HW_Transforms.RotateMat(angleDegrees  , rotationAxis);
         
-        //Permite que las ruedas roten sobre su propio eje x.
-        Matrix4x4 wheelrotate = HW_Transforms.RotateMat(angle * Time.time, wheelAxis);
+        Matrix4x4 spoilerMove = HW_Transforms.TranslationMat(0,1.05f,-2.31f);
+
+        Matrix4x4 moveWheel1 = HW_Transforms.TranslationMat(0.9f,0.35f,1.5f);
+        Matrix4x4 moveWheel2 = HW_Transforms.TranslationMat(-0.9f,0.35f,1.5f);
+        // Matrix4x4 rotateWheel = HW_Transforms.RotateMat(90, AXIS.X);
+
+        Matrix4x4 moveWheel3 = HW_Transforms.TranslationMat(0.9f,0.35f,-1.4f);
+        Matrix4x4 moveWheel4 = HW_Transforms.TranslationMat(-0.9f,0.35f,-1.4f);
+        Matrix4x4 scaleWheel = HW_Transforms.ScaleMat(.2f,.2f,.2f);
+
+        Matrix4x4 rotateWheelinOrigin = HW_Transforms.RotateMat(-90*Time.time, AXIS.X);
+        
+
+        //combine the matrices
         //operations are executed in backwards order
         Matrix4x4 composite =  move * rotate;
+
+        // for (int i=0; i<newVertices.Length; i++)
+        // {
+        //     Vector4 temp = new Vector4(newVertices[i].x, newVertices[i].y, newVertices[i].z, 1);
+
+        //     newVertices[i] = composite * temp;
+        // }
         for (int i=0; i<newVertices.Length; i++)
         {
             Vector4 temp = new Vector4(baseVertices[i].x, baseVertices[i].y, baseVertices[i].z, 1);
+
             newVertices[i] = composite * temp;
         }
-        
-        //Crear 4 matrices de traslación respecto al coche. x-x, y-y, z-z.
-        //adelante izquierda
-        Matrix4x4 posicionI = HW_Transforms.TranslationMat(-1f, .3f, +1.5f);
-        //adelante derecha
-        Matrix4x4 posicionD = HW_Transforms.TranslationMat(+1f, .3f,+1.5f);
-        //atras izquierda
-        Matrix4x4 posicionIat = HW_Transforms.TranslationMat(-1f, .3f, -1.5f);
-        //atras derecha
-        Matrix4x4 posicionDat = HW_Transforms.TranslationMat(+1f, .3f, -1.5f);
-        //Crear matriz de escala para las ruedas.
-        Matrix4x4 scale2 = HW_Transforms.ScaleMat(scale, scale, scale);
 
-        //Crea las matrices de los vertices de las ruedas.
-        for (int i=0; i<newVerticesw1.Length; i++)
+        for (int i = 0; i<spoilerNewVertices.Length; i++)
         {
-            Vector4 tempw1 = new Vector4(baseVerticesw1[i].x, baseVerticesw1[i].y, baseVerticesw1[i].z, 1);
-            newVerticesw1[i] =  composite* posicionI* wheelrotate*  scale2*  tempw1;
-            //newVerticesw1[i] =  wheelrotate *  newVerticesw1[i];
+            Vector4 temp = new Vector4(spoilerVertices[i].x, spoilerVertices[i].y, spoilerVertices[i].z, 1);
+
+            spoilerNewVertices[i] = composite * spoilerMove *temp;
         }
-        for (int i=0; i<newVerticesw2.Length; i++)
+
+        for(int i = 0; i<wheel1NewVertices.Length; i++)
         {
-            Vector4 tempw2 = new Vector4(baseVerticesw2[i].x, baseVerticesw2[i].y, baseVerticesw2[i].z, 1);
-            newVerticesw2[i] = composite *posicionD * wheelrotate* scale2 *  tempw2;
+            Vector4 temp1 = new Vector4(wheel1Vertices[i].x, wheel1Vertices[i].y, wheel1Vertices[i].z, 1);
+
+            wheel1NewVertices[i] = composite * moveWheel1 *rotateWheelinOrigin* scaleWheel * temp1;
         }
-        for (int i=0; i<newVerticesw3.Length; i++)
+
+        for(int i = 0; i<wheel2NewVertices.Length; i++)
         {
-            Vector4 tempw3 = new Vector4(baseVerticesw3[i].x, baseVerticesw3[i].y, baseVerticesw3[i].z, 1);
-            newVerticesw3[i] = composite *posicionIat * wheelrotate* scale2 *  tempw3;
+            Vector4 temp2 = new Vector4(wheel2Vertices[i].x, wheel2Vertices[i].y, wheel2Vertices[i].z, 1);
+
+            wheel2NewVertices[i] = composite * moveWheel2 * rotateWheelinOrigin*scaleWheel *temp2;
         }
-        for (int i=0; i<newVerticesw4.Length; i++)
+
+        for(int i = 0; i<wheel3NewVertices.Length; i++)
         {
-            Vector4 tempw4 = new Vector4(baseVerticesw4[i].x, baseVerticesw4[i].y, baseVerticesw4[i].z, 1);
-            newVerticesw4[i] = composite *posicionDat * wheelrotate* scale2 *  tempw4;
+            Vector4 temp3 = new Vector4(wheel3Vertices[i].x, wheel3Vertices[i].y, wheel3Vertices[i].z, 1);
+
+            wheel3NewVertices[i] = composite  * moveWheel3* rotateWheelinOrigin * scaleWheel *temp3;
         }
-        //apply the matrices to the vertices
-        mesh.vertices = newVertices;
-        wheel1.vertices = newVerticesw1;
-        wheel2.vertices = newVerticesw2;
-        wheel3.vertices = newVerticesw3;
-        wheel4.vertices = newVerticesw4;
-        mesh.RecalculateNormals();
-        wheel1.RecalculateNormals();
-        wheel2.RecalculateNormals();
-        wheel3.RecalculateNormals();
-        wheel4.RecalculateNormals();
+
+        for(int i = 0; i<wheel4NewVertices.Length; i++)
+        {
+            Vector4 temp4 = new Vector4(wheel4Vertices[i].x, wheel4Vertices[i].y, wheel4Vertices[i].z, 1);
+
+            wheel4NewVertices[i] = composite * moveWheel4* rotateWheelinOrigin* scaleWheel* temp4;
+        }
+
+
+        mesh[0].vertices = newVertices;
+        mesh[1].vertices = spoilerNewVertices;
+        wheel1Mesh.vertices = wheel1NewVertices;
+        wheel2Mesh.vertices = wheel2NewVertices;
+        wheel3Mesh.vertices = wheel3NewVertices;
+        wheel4Mesh.vertices = wheel4NewVertices;
+        mesh[0].RecalculateNormals();
+        mesh[1].RecalculateNormals();
+        wheel1Mesh.RecalculateNormals();
+        wheel2Mesh.RecalculateNormals();
+        wheel3Mesh.RecalculateNormals();
+        wheel4Mesh.RecalculateNormals();
 
     
     }
-
     Vector3 PositionLerp(Vector3 start, Vector3 end, float time)
     {
         return start + (end - start) * time;
@@ -169,9 +222,9 @@ public class ApplyTransforms : MonoBehaviour
         return T;
     }
 
-    public getPosition(){
-        //swap variables de donde estas y a donde vas.
+    //Como se hace get position? Que tiene que ver con el api?
+    // public getPosition(){
+    //     //swap variables de donde estas y a donde vas.
 
-    }
-
+    // }
 }
