@@ -10,6 +10,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [Serializable]
+
+
 public class AgentData
 {
     /*
@@ -115,6 +117,8 @@ public class AgentController : MonoBehaviour
     public float timeToUpdate = 5.0f;
     private float timer, dt;
 
+    [SerializeField] GameObject carPrefab;
+
     void Start()
     {
         agentsData = new AgentsData();
@@ -195,7 +199,7 @@ public class AgentController : MonoBehaviour
 
             // Once the configuration has been sent, it launches a coroutine to get the agents data.
             StartCoroutine(GetAgentsData());
-            StartCoroutine(GetTrafficData());
+            // StartCoroutine(GetTrafficData());
         }
     }
 
@@ -218,15 +222,21 @@ public class AgentController : MonoBehaviour
                 Vector3 newAgentPosition = new Vector3(agent.x, agent.y, agent.z);
                     if(!agents.ContainsKey(agent.id))
                     {
-                        Vector3 currentPosition = new Vector3();
-                        if(currPositions.TryGetValue(agent.id, out currentPosition))
-                            prevPositions[agent.id] = currentPosition;
-                        currPositions[agent.id] = newAgentPosition;
+                        // prevPositions[agent.id] = newAgentPosition;
+                        agents[agent.id] = Instantiate(carPrefab, Vector3.zero, Quaternion.identity);   
+                        ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
+                        applyTransforms.getPosition(newAgentPosition);
                     }
                     else
                     {
-                        prevPositions[agent.id] = newAgentPosition;
-                        agents[agent.id] = Instantiate(agentPrefab, newAgentPosition, Quaternion.identity);
+                        ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
+                        applyTransforms.getPosition(newAgentPosition);
+                        // Vector3 currentPosition = new Vector3();
+                        // if(currPositions.TryGetValue(agent.id, out currentPosition))
+                        //     prevPositions[agent.id] = currentPosition;
+                        // currPositions[agent.id] = newAgentPosition;
+                        // agents[agent.id].transform.position = PositionLerp(prevPositions[agent.id], currPositions[agent.id], dt);
+                        
                     }
             }
             updated = true;

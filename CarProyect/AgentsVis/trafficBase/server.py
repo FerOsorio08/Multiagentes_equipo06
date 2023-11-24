@@ -3,8 +3,8 @@
 # Octavio Navarro. October 2023git
 
 from flask import Flask, request, jsonify
-from trafficBase.model import CityModel
-from trafficBase.agent import *
+from model import CityModel
+from agent import *
 # Size of the board:
 number_agents = 10
 width = 28
@@ -43,9 +43,18 @@ def getAgents():
     global randomModel
 
     if request.method == 'GET':
-        agentPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":z}
-                          for a, (x, z) in randomModel.grid.coord_iter()
-                          if isinstance(a, Car)]
+        # agentPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":z}
+        #                   for a, (x, z) in randomModel.grid.coord_iter()
+        #                   if isinstance(a, Car)
+        agentPositions = []
+        for a,(x,z) in randomModel.grid.coord_iter():
+            # if len(a)>1:
+            #     print("A",a)
+            for agent in a:
+                if isinstance(agent, Car):
+                    print("Agent", agent)
+                    agentPositions += [{"id": str(agent.unique_id), "x": x, "y":1, "z":z}]
+        
 
         return jsonify({'positions':agentPositions})
 
