@@ -22,7 +22,8 @@ class CityModel(Model):
             graph = nx.DiGraph()  # Change to directed graph
             self.goal = (0, 0)  # Change to destination
             self.destinationList = []
-            self.placeofBirth=[(0,0),(0,23),(23,0),(23,23)]
+            self.placeofBirth=[(0,0),(0,24),(23,0),(23,24)]
+            self.lives=4
 
 
             # Load the map file. The map file is a text file where each character represents an agent.
@@ -112,16 +113,28 @@ class CityModel(Model):
                             weight = direction_weights.get(direction, 0) 
                             graph.add_edge((x, y + 1), (x, y + 2), weight=weight)
                     else:
-                        neighbors = [
+                        if(x==22 and y==22):
+                            neighbors = [
                             (x + 1, y + 1),
                             (x - 1, y + 1),
                             (x, y + 1)
-                        ]
-                        for neighbor in neighbors:
-                            if neighbor in graph.nodes:
-                                direction = graph.nodes[node]['direction']
-                                weight = direction_weights.get(direction, 0) 
-                                graph.add_edge(node, neighbor, weight=weight)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
+                        else:
+                            neighbors = [
+                                (x + 1, y + 1),
+                                (x - 1, y + 1),
+                                (x, y + 1)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                 
                 #DOWN
                 if graph.nodes[node]['direction'] == "v" or graph.nodes[node]['direction'] == "*":
@@ -172,16 +185,38 @@ class CityModel(Model):
                             weight = direction_weights.get(direction, 0) 
                             graph.add_edge((x - 1, y), (x - 2, y), weight=weight)
                     else:
-                        neighbors = [
-                            (x - 1, y + 1),
-                            (x - 1, y - 1),
-                            (x - 1, y)
-                        ]
-                        for neighbor in neighbors:
-                            if neighbor in graph.nodes:
-                                direction = graph.nodes[node]['direction']
-                                weight = direction_weights.get(direction, 0) 
-                                graph.add_edge(node, neighbor, weight=weight)
+                        if (x==19 and y==11) or(x==18 and y==11):
+                            neighbors = [
+                                (x - 1, y + 1),
+                                (x - 1, y)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
+                        elif (x==15 and y==12) or(x==14 and y==12):
+                            neighbors = [
+                                (x - 1, y - 1),
+                                (x - 1, y)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
+                            
+                        else:
+                            neighbors = [
+                                (x - 1, y + 1),
+                                (x - 1, y - 1),
+                                (x - 1, y)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
                 #Right
                 if graph.nodes[node]['direction'] == ">" or graph.nodes[node]['direction'] == "X":
                     if (x + 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x + 1, y)]:
@@ -200,10 +235,20 @@ class CityModel(Model):
                             weight = direction_weights.get(direction, 0) 
                             graph.add_edge((x + 1, y), (x + 2, y), weight=weight)
                     else:
-                        if (x==12 and y==9) or(x==11 and y==9):
+                        if (x==12 and y==9) or(x==11 and y==9)or (x==13 and y==1) or (x==6 and y==1):
                             neighbors = [
                             (x + 1, y - 1),
                             (x + 1, y)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
+                        elif (x==15 and y==8) or(x==16 and y==8):
+                            neighbors = [
+                                (x + 1, y + 1),
+                                (x + 1, y)
                             ]
                             for neighbor in neighbors:
                                 if neighbor in graph.nodes:
@@ -247,23 +292,24 @@ class CityModel(Model):
             #     self.schedule.add(agent)
 
             self.running = True
-            # self.plot_graph(graph)
+            #self.plot_graph(graph)
 
     def create_agent(self):
-        i = self.num_agents
-        place = self.placeofBirth[randint(0, 3)]
-        print("place of birth: ", place)
-        self.goal = self.destinationList[randint(0, 9)]
-        print("goal: ", self.goal)
-        agent = Car(i, self, self.graph, self.goal)
-        
-        # Check if the cell is empty before placing the agent
-        
-        self.grid.place_agent(agent, place)
-        self.schedule.add(agent)
-        self.num_agents -= 1
-        
-
+        for x in range(0,4):
+            i = self.num_agents
+            place = self.placeofBirth[x]
+            print("place of birth: ", place, x)
+            self.goal = self.destinationList[randint(0, 9)]
+            agent = Car(i, self, self.graph, self.goal)
+            cell_contents = self.grid.get_cell_list_contents(place)
+            if any(isinstance(agent, Car) for agent in cell_contents):
+                print("Hello, an agent already exists in this cell!")
+                self.lives-=1
+            else:
+                self.grid.place_agent(agent, place)
+                self.schedule.add(agent)
+                self.num_agents -= 1
+           
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
         #unflip y-axis
@@ -273,6 +319,9 @@ class CityModel(Model):
 
     def step(self):
         '''Advance the model by one step.'''
+        if self.lives == 0 :
+            self.running = False
+            print("Simulation Ended")
         self.schedule.step()
         print("step", self.schedule.steps)
         if (self.schedule.steps%10 == 0) or self.schedule.steps == 1:

@@ -255,6 +255,7 @@ class Car(Agent):
             return path
         except nx.NetworkXNoPath:
             # If no path is found, return None
+            print("start", start," goal ", goal)
             return None
     
     #Complejidad O(1)
