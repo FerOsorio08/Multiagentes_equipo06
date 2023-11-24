@@ -113,16 +113,16 @@ public class ApplyTransforms : MonoBehaviour
     }
 
     void DoTransform(){
-         T=getT();
+        T=getT();
         Vector3 newposition=PositionLerp(startPosition, endPosition, T);
         //create the matrices
 
         // Calculate the angle in radians
-        float angleRadians = Mathf.Atan2(displacement.z, displacement.x);
+        float angleRadians = Mathf.Atan2(newposition.z, newposition.x);
 
         // Convert the angle to degrees
         float angleDegrees = angleRadians * Mathf.Rad2Deg -90;
-        Matrix4x4 move= HW_Transforms.TranslationMat(displacement.x *Time.time , displacement.y *Time.time, displacement.z *Time.time);
+        Matrix4x4 move= HW_Transforms.TranslationMat(newposition.x , newposition.y, newposition.z);
         Matrix4x4 moveOrigin = HW_Transforms.TranslationMat(-displacement.x, -displacement.y, -displacement.z);
         Matrix4x4 moveObject = HW_Transforms.TranslationMat(displacement.x, displacement.y, displacement.z);
         Matrix4x4 rotate = HW_Transforms.RotateMat(angleDegrees  , rotationAxis);
@@ -223,8 +223,13 @@ public class ApplyTransforms : MonoBehaviour
     }
 
     //Como se hace get position? Que tiene que ver con el api?
-    // public getPosition(){
-    //     //swap variables de donde estas y a donde vas.
+    public void getPosition(Vector3 position){
+        //swap variables de donde estas y a donde vas.
+        startPosition=endPosition;
+        endPosition=position;
+        //cuanto tiempo ha pasado desde que empezaste a moverte
+        currentTime=0;
 
-    // }
+
+    }
 }
