@@ -33,10 +33,11 @@ public class ApplyTransforms : MonoBehaviour
     Vector3[] wheel3NewVertices;
     Vector3[] wheel4Vertices;
     Vector3[] wheel4NewVertices;
-
+    float D;
     float T;
     float currentTime=0;
     float motionTime=10;
+    float roundedAngle;
     Vector3 startPosition;
     Vector3 endPosition;
 
@@ -109,33 +110,35 @@ public class ApplyTransforms : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("startPosition: "+startPosition);
         DoTransform();
     }
 
     void DoTransform(){
         T=getT();
+        //D=GetDirection(startPosition, endPosition);
         Vector3 newposition=PositionLerp(startPosition, endPosition, T);
         //create the matrices
-
         // Calculate the angle in radians
         float angleRadians = Mathf.Atan2(newposition.z, newposition.x);
-
         // Convert the angle to degrees
-        float angleDegrees = angleRadians * Mathf.Rad2Deg -90;
+        float angleDegrees = D * Mathf.Rad2Deg;
         Matrix4x4 move= HW_Transforms.TranslationMat(newposition.x , newposition.y, newposition.z);
         Matrix4x4 moveOrigin = HW_Transforms.TranslationMat(-displacement.x, -displacement.y, -displacement.z);
         Matrix4x4 moveObject = HW_Transforms.TranslationMat(displacement.x, displacement.y, displacement.z);
-        Matrix4x4 rotate = HW_Transforms.RotateMat(angleDegrees  , rotationAxis);
+        Matrix4x4 rotate = HW_Transforms.RotateMat( angleDegrees, rotationAxis);
         
-        Matrix4x4 spoilerMove = HW_Transforms.TranslationMat(0,1.05f,-2.31f);
-
-        Matrix4x4 moveWheel1 = HW_Transforms.TranslationMat(0.9f,0.35f,1.5f);
-        Matrix4x4 moveWheel2 = HW_Transforms.TranslationMat(-0.9f,0.35f,1.5f);
+        Matrix4x4 spoilerMove = HW_Transforms.TranslationMat(0,0.21f,-0.462f);
+        Matrix4x4 moveCar = HW_Transforms.TranslationMat(0f,0f,0f);
+        Matrix4x4 moveWheel1 = HW_Transforms.TranslationMat(0.18f,0.07f,0.3f);
+        Matrix4x4 moveWheel2 = HW_Transforms.TranslationMat(-0.18f,0.07f,0.3f);
         // Matrix4x4 rotateWheel = HW_Transforms.RotateMat(90, AXIS.X);
 
-        Matrix4x4 moveWheel3 = HW_Transforms.TranslationMat(0.9f,0.35f,-1.4f);
-        Matrix4x4 moveWheel4 = HW_Transforms.TranslationMat(-0.9f,0.35f,-1.4f);
-        Matrix4x4 scaleWheel = HW_Transforms.ScaleMat(.2f,.2f,.2f);
+        Matrix4x4 moveWheel3 = HW_Transforms.TranslationMat(0.18f,0.07f,-0.3f);
+        Matrix4x4 moveWheel4 = HW_Transforms.TranslationMat(-0.18f,0.07f,-0.3f);
+        Matrix4x4 scaleWheel = HW_Transforms.ScaleMat(.035f,.035f,.035f);
+        Matrix4x4 scaleCar = HW_Transforms.ScaleMat(.2f,.2f,.2f);
+        Matrix4x4 scaleSpoiler = HW_Transforms.ScaleMat(.2f,.2f,.2f);
 
         Matrix4x4 rotateWheelinOrigin = HW_Transforms.RotateMat(-90*Time.time, AXIS.X);
         
@@ -154,14 +157,14 @@ public class ApplyTransforms : MonoBehaviour
         {
             Vector4 temp = new Vector4(baseVertices[i].x, baseVertices[i].y, baseVertices[i].z, 1);
 
-            newVertices[i] = composite * temp;
+            newVertices[i] = composite* moveCar*scaleCar* temp;
         }
 
         for (int i = 0; i<spoilerNewVertices.Length; i++)
         {
             Vector4 temp = new Vector4(spoilerVertices[i].x, spoilerVertices[i].y, spoilerVertices[i].z, 1);
 
-            spoilerNewVertices[i] = composite * spoilerMove *temp;
+            spoilerNewVertices[i] = composite * spoilerMove* scaleSpoiler *temp;
         }
 
         for(int i = 0; i<wheel1NewVertices.Length; i++)
@@ -208,6 +211,31 @@ public class ApplyTransforms : MonoBehaviour
 
     
     }
+   float GetDirection(Vector3 startPosition, Vector3 endPosition) {
+    Debug.Log("startPosition: " + startPosition);
+    Debug.Log("endPosition: " + endPosition);
+
+   
+    float deltaX = endPosition.x - startPosition.x;
+    float deltaY = endPosition.z - startPosition.z;
+
+    if(deltaX==0 && deltaY==1){
+        roundedAngle=90f;
+    }
+    else if(deltaX==0 && deltaY==-1){
+         roundedAngle=270f;
+    }
+    else if(deltaX==1 && deltaY==0){
+         roundedAngle=0f;
+    }
+    else if(deltaX==-1 && deltaY==0){
+         roundedAngle=180f;
+    }
+
+    Debug.Log("Rounded Angle (Degrees): " + roundedAngle);
+    return roundedAngle;
+}
+
     Vector3 PositionLerp(Vector3 start, Vector3 end, float time)
     {
         return start + (end - start) * time;

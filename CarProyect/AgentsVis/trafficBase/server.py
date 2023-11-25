@@ -53,7 +53,7 @@ def getAgents():
             for agent in a:
                 if isinstance(agent, Car):
                     print("Agent", agent)
-                    agentPositions += [{"id": str(agent.unique_id), "x": x, "y":1, "z":z}]
+                    agentPositions += [{"id": str(agent.unique_id), "x": x, "y":0, "z":z}]
         
 
         return jsonify({'positions':agentPositions})
@@ -64,7 +64,7 @@ def getObstacles():
     global randomModel
 
     if request.method == 'GET':
-        carPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":z}
+        carPositions = [{"id": str(a.unique_id), "x": x, "y":0, "z":z}
                         for a, (x, z) in randomModel.grid.coord_iter()
                         if isinstance(a, ObstacleAgent)]
 
@@ -75,7 +75,7 @@ def getTrafficLight():
     global randomModel
 
     if request.method == 'GET':
-        trafficPositions = [{"id": str(a.unique_id), "x": x, "y":1, "z":z, "state":a.state}
+        trafficPositions = [{"id": str(a.unique_id), "x": x, "y":0, "z":z, "state":a.state}
                         for a, (x, z) in randomModel.grid.coord_iter()
                         if isinstance(a, Traffic_Light)]
 
