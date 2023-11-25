@@ -247,12 +247,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agentPrefab: {fileID: 993549348249905, guid: 563375cb179ab4d4d8c0ce2bfc651964, type: 3}
-  obstaclePrefab: {fileID: 0}
-  floor: {fileID: 0}
+  obstaclePrefab: {fileID: 961990229689801968, guid: 0870e23a47df89e468e8af19c065fce0, type: 3}
+  floor: {fileID: 3240343348373693069, guid: 646fc54ff3078ce94bbdbd0f0d4c4a05, type: 3}
   NAgents: 0
   width: 0
   height: 0
-  timeToUpdate: 5
+  timeToUpdate: 2
+  carPrefab: {fileID: 5691042183876350592, guid: b6452e904d9ee4a79853747e4fb76bef, type: 3}
 --- !u!4 &1234089284
 Transform:
   m_ObjectHideFlags: 0
