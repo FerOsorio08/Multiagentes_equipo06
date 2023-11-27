@@ -7,8 +7,8 @@ from model import CityModel
 from agent import *
 # Size of the board:
 number_agents = 10
-width = 28
-height = 28
+width = 24
+height = 24
 randomModel = None
 currentStep = 0
 
@@ -30,8 +30,8 @@ def initModel():
         return jsonify({"message":"Parameters recieved, model initiated."})
     elif request.method == 'GET':
         number_agents = 10
-        width = 30
-        height = 30
+        width = 24
+        height = 24
         currentStep = 0
         randomModel = CityModel(number_agents)
 
@@ -75,9 +75,14 @@ def getTrafficLight():
     global randomModel
 
     if request.method == 'GET':
-        trafficPositions = [{"id": str(a.unique_id), "x": x, "y":0, "z":z, "state":a.state}
-                        for a, (x, z) in randomModel.grid.coord_iter()
-                        if isinstance(a, Traffic_Light)]
+        trafficPositions = []
+        for a,(x,z) in randomModel.grid.coord_iter():
+            for agent in a:
+                if isinstance(agent, Traffic_Light):
+                    trafficPositions += [{"id": str(agent.unique_id), "x": x, "y":0, "z":z, "state":agent.state}]
+        # trafficPositions = [{"id": str(a.unique_id), "x": x, "y":0, "z":z, "state":a.state}
+        #                 for a, (x, z) in randomModel.grid.coord_iter()
+        #                 if isinstance(a, Traffic_Light)]
 
         return jsonify({'positions':trafficPositions})
 
