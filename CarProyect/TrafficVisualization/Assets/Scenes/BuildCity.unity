@@ -160,6 +160,7 @@ MonoBehaviour:
   height: 0
   timeToUpdate: 2
   carPrefab: {fileID: 5691042183876350592, guid: b6452e904d9ee4a79853747e4fb76bef, type: 3}
+  trafficLightPrefab: {fileID: 581250429500718919, guid: 67ff088addbe2419994837b18476c75a, type: 3}
 --- !u!4 &95277437
 Transform:
   m_ObjectHideFlags: 0

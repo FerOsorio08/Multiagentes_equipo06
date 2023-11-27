@@ -34,12 +34,14 @@ public class AgentData
         this.z = z;
     }
 }
+[Serializable]
 public class TrafficLight
 {
-    public string id, state;
+    public string id;
+    public bool state;
     public float x, y, z;
 
-    public TrafficLight(string id, float x, float y, float z,string state)
+    public TrafficLight(string id, float x, float y, float z,bool state)
     {
         this.id = id;
         this.x = x;
@@ -64,11 +66,11 @@ public class AgentsData
     public AgentsData() => this.positions = new List<AgentData>();
 }
 
-public class TrafficDatas
+public class TrafficLights
 {
     public List<TrafficLight> positions;
 
-    public TrafficDatas() => this.positions = new List<TrafficLight>();
+    public TrafficLights() => this.positions = new List<TrafficLight>();
 }
 
 public class AgentController : MonoBehaviour
@@ -102,11 +104,12 @@ public class AgentController : MonoBehaviour
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
     string getObstaclesEndpoint = "/getObstacles";
+    string getTrafficLightEndpoint = "/getTrafficLight";
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentsData agentsData, obstacleData;
 
-    TrafficDatas trafficData;
+    TrafficLights trafficData;
     Dictionary<string, GameObject> agents;
     Dictionary<string, Vector3> prevPositions, currPositions;
 
@@ -118,11 +121,12 @@ public class AgentController : MonoBehaviour
     private float timer, dt;
 
     [SerializeField] GameObject carPrefab;
+    [SerializeField] GameObject trafficLightPrefab;
 
     void Start()
     {
         agentsData = new AgentsData();
-        trafficData = new TrafficDatas();
+        trafficData = new TrafficLights();
 
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
@@ -167,6 +171,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetAgentsData());
+            StartCoroutine(GetTrafficData());
         }
     }
 
@@ -199,7 +204,7 @@ public class AgentController : MonoBehaviour
 
             // Once the configuration has been sent, it launches a coroutine to get the agents data.
             StartCoroutine(GetAgentsData());
-            // StartCoroutine(GetTrafficData());
+            StartCoroutine(GetTrafficData());
         }
     }
 
@@ -250,20 +255,29 @@ public class AgentController : MonoBehaviour
 
     IEnumerator GetTrafficData() 
     {
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLightEndpoint);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
             Debug.Log(www.error);
         else 
         {
-            obstacleData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
+            trafficData = JsonUtility.FromJson<TrafficLights>(www.downloadHandler.text);
 
-            Debug.Log(obstacleData.positions);
+            Debug.Log("Traffic Data");
+            Debug.Log(www.downloadHandler.text);
 
-            foreach(AgentData obstacle in obstacleData.positions)
+            // Debug.Log("Getting Traffic positions");
+            // Debug.Log(trafficData.positions);
+
+            Debug.Log("Traffic Data Count");
+            Debug.Log(trafficData.positions.Count);
+
+            foreach(TrafficLight traffic in trafficData.positions)
             {
-                Instantiate(obstaclePrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
+                Debug.Log("Traffic Light created at: " + traffic.x + " " + traffic.y + " " + traffic.z + "");
+                Instantiate(trafficLightPrefab, new Vector3(traffic.x,traffic.y,traffic.z), Quaternion.identity);
+                // Instantiate(trafficLightPrefab, new Vector3(traffic.x,traffic.y,traffic.z), Quaternion.identity);
             }
         }
     }
