@@ -208,6 +208,13 @@ public class ApplyTransforms : MonoBehaviour
         wheel2Mesh.RecalculateNormals();
         wheel3Mesh.RecalculateNormals();
         wheel4Mesh.RecalculateNormals();
+        mesh[0].RecalculateBounds();
+        mesh[1].RecalculateBounds();
+        wheel1Mesh.RecalculateBounds();
+        wheel2Mesh.RecalculateBounds();
+        wheel3Mesh.RecalculateBounds();
+        wheel4Mesh.RecalculateBounds();
+        
 
     
     }
