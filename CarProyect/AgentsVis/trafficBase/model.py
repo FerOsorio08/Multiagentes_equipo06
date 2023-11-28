@@ -298,13 +298,15 @@ class CityModel(Model):
         for x in range(0,4):
             i = self.num_agents
             place = self.placeofBirth[x]
-            print("place of birth: ", place, x)
+            #print("place of birth: ", place, x)
             self.goal = self.destinationList[randint(0, 9)]
             agent = Car(i, self, self.graph, self.goal)
             cell_contents = self.grid.get_cell_list_contents(place)
             if any(isinstance(agent, Car) for agent in cell_contents):
-                print("Hello, an agent already exists in this cell!")
-                self.lives-=1
+                # print("Hello, an agent already exists in this cell!")
+                # print("lives are: ",self.lives)
+                # #self.lives-=1
+                print(" ")
             else:
                 self.grid.place_agent(agent, place)
                 self.schedule.add(agent)
@@ -319,10 +321,11 @@ class CityModel(Model):
 
     def step(self):
         '''Advance the model by one step.'''
-        if self.lives == 0 :
+        if self.lives == 0: #or self.lives<0 :
             self.running = False
             print("Simulation Ended")
         self.schedule.step()
         print("step", self.schedule.steps)
-        if (self.schedule.steps%10 == 0) or self.schedule.steps == 1:
-            self.create_agent()
+        # if (self.schedule.steps%10 == 0) or self.schedule.steps == 1:
+        #     self.create_agent()
+        self.create_agent()
