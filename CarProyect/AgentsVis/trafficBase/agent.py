@@ -380,9 +380,13 @@ class Traffic_Light(Agent):
             state: Whether the traffic light is green or red
             timeToChange: After how many step should the traffic light change color 
         """
+        print("Traffic light created")
         self.traffic_type = traffic_type
+        print("Traffic type: ", self.traffic_type)
         self.state = state
+        print("State: ", self.state)
         self.timeToChange = timeToChange
+        print("Time to change: ", self.timeToChange)
 
     def step(self):
         """ 
