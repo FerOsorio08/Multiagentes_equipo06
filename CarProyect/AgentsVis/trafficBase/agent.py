@@ -24,6 +24,7 @@ class Car(Agent):
         self.count=0
         self.path=[]
         self.patience=10
+        self.agentstate=0
 
     def move(self):
         """ 
@@ -345,7 +346,9 @@ class Car(Agent):
         Determines the new direction it will take, and then moves
         """
         print(self.pos)
-        if self.count==0:
+        if self.agentstate==1:
+            self.deleteAgent()
+        elif self.count==0:
             self.path = self.a_star_search(self.graph, self.pos, self.goal)
             self.count=1
             if self.path is not None:
@@ -354,7 +357,8 @@ class Car(Agent):
         elif self.path is not None and len(self.path) > 0:
             self.move()
             if self.pos == self.goal:
-                self.deleteAgent()
+                self.agentstate=1
+                #self.deleteAgent()
             print("found path", self.path)
         else:
             # If the path is empty, find a new path
