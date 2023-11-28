@@ -44,7 +44,8 @@ class CityModel(Model):
                             graph.add_node((c, self.height - r - 1), direction=col)  # Add direction as an attribute
 
                         elif col in ["S", "s"]:
-                            agent = Traffic_Light(f"tl_{r * self.width + c}", self,dataDictionary[col],False if col == "S" else True, int(dataDictionary[col]))
+                            agent = Traffic_Light(f"tl_{r * self.width + c}", self,False if col == "S" else True, int(dataDictionary[col]))
+                            print("columna", dataDictionary[col])
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             self.schedule.add(agent)
                             self.traffic_lights.append(agent)
