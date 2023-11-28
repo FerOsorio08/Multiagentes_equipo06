@@ -237,12 +237,12 @@ public class AgentController : MonoBehaviour
                         // prevPositions[agent.id] = newAgentPosition;
                         agents[agent.id] = Instantiate(carPrefab, Vector3.zero, Quaternion.identity);   
                         ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
-                        applyTransforms.getPosition(newAgentPosition);
+                        applyTransforms.getPosition(newAgentPosition, true);
                     }
                      else
                     {
                         ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
-                        applyTransforms.getPosition(newAgentPosition);
+                        applyTransforms.getPosition(newAgentPosition, false);
 
                         // Check if the agent has reached its goal within the tolerance
                         if (Mathf.Abs(agent.goal[0] - newAgentPosition.x) < positionTolerance &&
