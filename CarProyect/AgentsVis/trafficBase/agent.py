@@ -59,7 +59,77 @@ class Car(Agent):
         next_move_car = [p for p,f in zip(possible_steps, CarSpaces) if f == True]
        
         # Cuando el agente esta sobre un semaforo todavía no funciona. 
-        
+        if len(next_move_car) > 1 and self.path[0] in next_move_car:
+            #print("pos", "Nextmove",next_move)
+            #decrement patience in the car. The car must wait.
+            print("not being able to move")
+            x,y=self.pos
+            xp,yp=self.path[0]
+            
+            if(x+1==xp and y==yp): #If going to the RIGHT
+                if len(next_move_road_right) > 0:
+                    print("not moving right")
+                    if (xp,yp+1) in next_move_road_right and (xp,yp+1) not in next_move_car:#if right up free
+                        print("right up")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp,yp+1))
+                        return
+                    elif (xp,yp-1) in next_move_road_right and (xp,yp-1) not in next_move_car:#if right down free
+                        print("right dow")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp,yp-1))
+                        return
+            elif(y+1==yp): #If going UP
+                print("up")
+                if len(next_move_road_up) > 0:
+                    print("up not empty")
+                    if (xp+1,yp) in next_move_road_up and (xp+1,yp) not in next_move_car:
+                        print("op right")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp+1,yp))
+                        return
+                    elif (xp-1,yp) in next_move_road_up and (xp-1,yp) not in next_move_car:
+                        print("left op")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp-1,yp))
+                        return
+            elif y - 1 == yp:  # If going DOWN
+                print("down")
+                if len(next_move_road_down) > 0:
+                    # print("down not empty")
+                    # print("y:", y, "yp:", yp)
+                    # print("next_move_road_down:", next_move_road_down)
+                    # print("Conditions:", (xp + 1, yp) in next_move_road_down, (xp + 1, yp) not in next_move_car, (xp - 1, yp) in next_move_road_down, (xp - 1, yp) not in next_move_car)
+
+                    if (xp + 1, yp) in next_move_road_down and (xp + 1, yp) not in next_move_car:  # if down right is free
+                        print("down right")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp + 1, yp))
+                        return
+                    elif (xp - 1, yp) in next_move_road_down and (xp - 1, yp) not in next_move_car:  # if down left is free
+                        print("down left")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp - 1, yp))
+                        return
+            elif(x-1==xp and y==yp): #If going to the left.
+                if len(next_move_road_left) > 0:
+                    print("not moving left")
+                    if (xp,yp+1) in next_move_road_left and (xp,yp+1) not in next_move_car:#if right up free
+                        print("left up")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp,yp+1))
+                        return
+                    elif (xp,yp-1) in next_move_road_left and (xp,yp-1) not in next_move_car:#if right down free
+                        print("left down")
+                        self.path.pop(0)
+                        self.model.grid.move_agent(self, (xp,yp-1))
+                        return
+                #If going LEFT
+                
+            self.patience-=1
+            print("patience decrementing")
+            #self.model.grid.move_agent(self, next_move)
+            return  
         if len(next_move_car) > 1 and self.path[0] in next_move_car:
             #print("pos", "Nextmove",next_move)
             #decrement patience in the car. The car must wait.

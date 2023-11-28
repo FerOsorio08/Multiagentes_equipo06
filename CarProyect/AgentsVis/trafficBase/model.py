@@ -324,5 +324,5 @@ class CityModel(Model):
             print("Simulation Ended")
         self.schedule.step()
         print("step", self.schedule.steps)
-        if (self.schedule.steps%10 == 0) or self.schedule.steps == 1:
+        if (self.schedule.steps%5 == 0) or self.schedule.steps == 1:
             self.create_agent()
