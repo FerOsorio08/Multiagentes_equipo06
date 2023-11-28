@@ -13,7 +13,7 @@ class CityModel(Model):
         Args:
             N: Number of agents in the simulation
     """
-    def __init__(self, N):
+    def _init_(self, N):
             # Load the map dictionary. The dictionary maps the characters in the map file to the corresponding agent.
             dataDictionary = json.load(open("city_files/mapDictionary.json"))
 
@@ -44,8 +44,7 @@ class CityModel(Model):
                             graph.add_node((c, self.height - r - 1), direction=col)  # Add direction as an attribute
 
                         elif col in ["S", "s"]:
-                            agent = Traffic_Light(f"tl_{r * self.width + c}", self,False if col == "S" else True, int(dataDictionary[col]))
-                            print("columna", dataDictionary[col])
+                            agent = Traffic_Light(f"tl_{r * self.width + c}", self,dataDictionary[col],False if col == "S" else True, int(dataDictionary[col]))
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             self.schedule.add(agent)
                             self.traffic_lights.append(agent)
@@ -188,7 +187,6 @@ class CityModel(Model):
                                     weight = direction_weights.get(direction, 0) 
                                     graph.add_edge(node, neighbor, weight=weight)
                 
-                
                 #LEFT
                 if graph.nodes[node]['direction'] == "<" or graph.nodes[node]['direction'] == "I":
                     if (x - 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x - 1, y)]:
@@ -289,6 +287,7 @@ class CityModel(Model):
                                     direction = graph.nodes[node]['direction']
                                     weight = direction_weights.get(direction, 0) 
                                     graph.add_edge(node, neighbor, weight=weight)
+                
                 # if graph.nodes[node]['direction'] == "<":
                 #     neighbors = [
                 #         (x - 1, y + 1),
@@ -322,14 +321,14 @@ class CityModel(Model):
             print("place of birth: ", place, x)
             self.goal = self.destinationList[randint(0, 9)]
             agent = Car(i, self, self.graph, self.goal)
-            cell_contents = self.grid.get_cell_list_contents((place))
-            if any(isinstance(agent, Car) for agent in cell_contents):
-                print("Hello, an agent already exists in this cell!")
-                self.lives-=1
-            else:
-                self.grid.place_agent(agent, place)
-                self.schedule.add(agent)
-                self.num_agents -= 1
+            cell_contents = self.grid.get_cell_list_contents(place)
+            # if any(isinstance(agent, Car) for agent in cell_contents):
+            #     print("Hello, an agent already exists in this cell!")
+            #     self.lives-=1
+            # else:
+            self.grid.place_agent(agent, place)
+            self.schedule.add(agent)
+            self.num_agents -= 1
            
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
@@ -345,5 +344,5 @@ class CityModel(Model):
             print("Simulation Ended")
         self.schedule.step()
         print("step", self.schedule.steps)
-        if (self.schedule.steps%3 == 0) or self.schedule.steps == 1:
+        if (self.schedule.steps%5 == 0) or self.schedule.steps == 1:
             self.create_agent()

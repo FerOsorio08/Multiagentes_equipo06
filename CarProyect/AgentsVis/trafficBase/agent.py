@@ -354,6 +354,8 @@ class Car(Agent):
             if self.path is not None:
                 self.path.pop(0)
                 self.move()
+            else:
+                print("path not found first", self.path)
         elif self.path is not None and len(self.path) > 0:
             self.move()
             if self.pos == self.goal:
