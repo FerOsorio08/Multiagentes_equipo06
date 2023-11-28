@@ -115,6 +115,8 @@ public class AgentController : MonoBehaviour
     Dictionary<string, GameObject> agents;
     Dictionary<string, Vector3> prevPositions, currPositions;
 
+    Dictionary<string, GameObject> trafficLightColors;
+
     bool updated = false, started = false;
 
     public GameObject agentPrefab, obstaclePrefab, floor;
@@ -134,13 +136,17 @@ public class AgentController : MonoBehaviour
         prevPositions = new Dictionary<string, Vector3>();
         currPositions = new Dictionary<string, Vector3>();
 
+        //traffic light color dictionary
+        trafficLightColors = new Dictionary<string, GameObject>();
+
+        // trafficLightsD = new Dictionary<string, GameObject>();
+
         agents = new Dictionary<string, GameObject>();
         
         timer = timeToUpdate;
 
         // Launches a couroutine to send the configuration to the server.
         StartCoroutine(SendConfiguration());
-        StartCoroutine(GetTrafficData());
     }
 
     private void Update() 
@@ -176,7 +182,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetAgentsData());
-            // StartCoroutine(GetTrafficData());
+            StartCoroutine(GetTrafficData());
         }
     }
 
@@ -255,7 +261,6 @@ public class AgentController : MonoBehaviour
                     }
             }
             updated = true;
-            if(!started) started = true;
         }
     }
 
@@ -283,12 +288,24 @@ public class AgentController : MonoBehaviour
             Debug.Log("Traffic Data Count");
             Debug.Log(trafficData.positions.Count);
 
-            foreach(TrafficLight traffic in trafficData.positions)
+              foreach (TrafficLight traffic in trafficData.positions)
             {
-                Debug.Log("Traffic Light created at: " + traffic.x + " " + traffic.y + " " + traffic.z + "");
-                Instantiate(trafficLightPrefab, new Vector3(traffic.x,traffic.y,traffic.z), Quaternion.identity);
-                // Instantiate(trafficLightPrefab, new Vector3(traffic.x,traffic.y,traffic.z), Quaternion.identity);
+                if (!started)
+                {
+                    trafficLightColors[traffic.id] = Instantiate(trafficLightPrefab, new Vector3(traffic.x, traffic.y, traffic.z), Quaternion.identity);
+                }
+                Light greenLight = trafficLightColors[traffic.id].transform.Find("green").GetComponent<Light>();
+                Light redLight = trafficLightColors[traffic.id].transform.Find("red").GetComponent<Light>();
+                greenLight.enabled = traffic.state;  // Access the state property from the TrafficLight object
+                redLight.enabled = !traffic.state;
+                
+                Debug.Log("Traffic state: " + traffic.state);
             }
+
+            if (!started) started = true;
+
         }
     }
 }
+
+

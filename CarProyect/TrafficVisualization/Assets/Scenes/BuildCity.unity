@@ -160,7 +160,7 @@ MonoBehaviour:
   height: 0
   timeToUpdate: 0.5
   carPrefab: {fileID: 5691042183876350592, guid: b6452e904d9ee4a79853747e4fb76bef, type: 3}
-  trafficLightPrefab: {fileID: 581250429500718919, guid: 67ff088addbe2419994837b18476c75a, type: 3}
+  trafficLightPrefab: {fileID: 7068575525479608752, guid: 178335ad9a3c848fd9826aec5ccf60c3, type: 3}
 --- !u!4 &95277437
 Transform:
   m_ObjectHideFlags: 0
@@ -395,7 +395,7 @@ MonoBehaviour:
   roadPrefab: {fileID: 3240343348373693069, guid: 167ecb65e021a4d74a6dbf7d55b0cbff, type: 3}
   buildingPrefab: {fileID: 33555395739272859, guid: 196b388d1bb9d4daf86c5858b958cd8b, type: 3}
   destinationPrefab: {fileID: 993549348249905, guid: 563375cb179ab4d4d8c0ce2bfc651964, type: 3}
-  semaphorePrefab: {fileID: 581250429500718919, guid: 67ff088addbe2419994837b18476c75a, type: 3}
+  semaphorePrefab: {fileID: 6847632441902102887, guid: 55784d163965e43ffbbcf238e8e8133c, type: 3}
   tileSize: 1
 --- !u!4 &1457529884
 Transform:
