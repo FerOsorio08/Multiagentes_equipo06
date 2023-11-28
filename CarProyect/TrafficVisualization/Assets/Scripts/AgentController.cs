@@ -25,13 +25,15 @@ public class AgentData
     */
     public string id;
     public float x, y, z;
+    public float[] goal;
 
-    public AgentData(string id, float x, float y, float z)
+    public AgentData(string id, float x, float y, float z, float[] goal)
     {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.goal = goal;
     }
 }
 [Serializable]
@@ -119,6 +121,7 @@ public class AgentController : MonoBehaviour
     public int NAgents, width, height;
     public float timeToUpdate = 5.0f;
     private float timer, dt;
+    float positionTolerance = 2f; 
 
     [SerializeField] GameObject carPrefab;
     [SerializeField] GameObject trafficLightPrefab;
@@ -137,6 +140,7 @@ public class AgentController : MonoBehaviour
 
         // Launches a couroutine to send the configuration to the server.
         StartCoroutine(SendConfiguration());
+        StartCoroutine(GetTrafficData());
     }
 
     private void Update() 
@@ -146,6 +150,7 @@ public class AgentController : MonoBehaviour
             timer = timeToUpdate;
             updated = false;
             StartCoroutine(UpdateSimulation());
+            
         }
 
         if (updated)
@@ -171,7 +176,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             StartCoroutine(GetAgentsData());
-            StartCoroutine(GetTrafficData());
+            // StartCoroutine(GetTrafficData());
         }
     }
 
@@ -221,6 +226,8 @@ public class AgentController : MonoBehaviour
             // Once the data has been received, it is stored in the agentsData variable.
             // Then, it iterates over the agentsData.positions list to update the agents positions.
             agentsData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
+            Debug.Log("Agents Data");
+            Debug.Log(www.downloadHandler.text);
 
             foreach(AgentData agent in agentsData.positions)
             {
@@ -230,18 +237,21 @@ public class AgentController : MonoBehaviour
                         // prevPositions[agent.id] = newAgentPosition;
                         agents[agent.id] = Instantiate(carPrefab, Vector3.zero, Quaternion.identity);   
                         ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
-                        applyTransforms.getPosition(newAgentPosition);
+                        applyTransforms.getPosition(newAgentPosition, true);
                     }
-                    else
+                     else
                     {
                         ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
-                        applyTransforms.getPosition(newAgentPosition);
-                        // Vector3 currentPosition = new Vector3();
-                        // if(currPositions.TryGetValue(agent.id, out currentPosition))
-                        //     prevPositions[agent.id] = currentPosition;
-                        // currPositions[agent.id] = newAgentPosition;
-                        // agents[agent.id].transform.position = PositionLerp(prevPositions[agent.id], currPositions[agent.id], dt);
-                        
+                        applyTransforms.getPosition(newAgentPosition, false);
+
+                        // Check if the agent has reached its goal within the tolerance
+                        if (Mathf.Abs(agent.goal[0] - newAgentPosition.x) < positionTolerance &&
+                            Mathf.Abs(agent.goal[1] - newAgentPosition.y) < positionTolerance)
+                        {
+                            Debug.Log("Agent " + agent.id + " has reached its goal");
+                            Destroy(agents[agent.id]);
+                            agents.Remove(agent.id);
+                        }
                     }
             }
             updated = true;
