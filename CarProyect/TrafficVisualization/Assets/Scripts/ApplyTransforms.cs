@@ -110,7 +110,7 @@ public class ApplyTransforms : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("startPosition: "+startPosition);
+        // Debug.Log("startPosition: "+startPosition);
         DoTransform();
     }
 
@@ -219,8 +219,8 @@ public class ApplyTransforms : MonoBehaviour
     
     }
    float GetDirection(Vector3 startPosition, Vector3 endPosition) {
-    Debug.Log("startPosition: " + startPosition);
-    Debug.Log("endPosition: " + endPosition);
+    // Debug.Log("startPosition: " + startPosition);
+    // Debug.Log("endPosition: " + endPosition);
 
    
     float deltaX = endPosition.x - startPosition.x;
