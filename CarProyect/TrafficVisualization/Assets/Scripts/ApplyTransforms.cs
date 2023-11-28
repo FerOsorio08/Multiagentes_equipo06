@@ -110,7 +110,7 @@ public class ApplyTransforms : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("startPosition: "+startPosition);
+        // Debug.Log("startPosition: "+startPosition);
         DoTransform();
     }
 
@@ -118,15 +118,16 @@ public class ApplyTransforms : MonoBehaviour
         T=getT();
         //D=GetDirection(startPosition, endPosition);
         Vector3 newposition=PositionLerp(startPosition, endPosition, T);
+        Vector3 newdirection=endPosition-startPosition;
         //create the matrices
         // Calculate the angle in radians
-        float angleRadians = Mathf.Atan2(newposition.z, newposition.x);
+        float angleRadians = Mathf.Atan2(newdirection.z, newdirection.x);
         // Convert the angle to degrees
-        float angleDegrees = D * Mathf.Rad2Deg;
+        float angleDegrees = angleRadians * Mathf.Rad2Deg;
         Matrix4x4 move= HW_Transforms.TranslationMat(newposition.x , newposition.y, newposition.z);
         Matrix4x4 moveOrigin = HW_Transforms.TranslationMat(-displacement.x, -displacement.y, -displacement.z);
         Matrix4x4 moveObject = HW_Transforms.TranslationMat(displacement.x, displacement.y, displacement.z);
-        Matrix4x4 rotate = HW_Transforms.RotateMat( angleDegrees, rotationAxis);
+        Matrix4x4 rotate = HW_Transforms.RotateMat( angleDegrees-90, rotationAxis);
         
         Matrix4x4 spoilerMove = HW_Transforms.TranslationMat(0,0.21f,-0.462f);
         Matrix4x4 moveCar = HW_Transforms.TranslationMat(0f,0f,0f);
@@ -219,8 +220,8 @@ public class ApplyTransforms : MonoBehaviour
     
     }
    float GetDirection(Vector3 startPosition, Vector3 endPosition) {
-    Debug.Log("startPosition: " + startPosition);
-    Debug.Log("endPosition: " + endPosition);
+    // Debug.Log("startPosition: " + startPosition);
+    // Debug.Log("endPosition: " + endPosition);
 
    
     float deltaX = endPosition.x - startPosition.x;
@@ -258,13 +259,14 @@ public class ApplyTransforms : MonoBehaviour
     }
 
     //Como se hace get position? Que tiene que ver con el api?
-    public void getPosition(Vector3 position){
+    public void getPosition(Vector3 position, bool startbool){
         //swap variables de donde estas y a donde vas.
         startPosition=endPosition;
         endPosition=position;
         //cuanto tiempo ha pasado desde que empezaste a moverte
         currentTime=0;
-
-
+        if (startbool){
+            startPosition=position;
+        }
     }
 }
