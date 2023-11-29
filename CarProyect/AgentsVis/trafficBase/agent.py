@@ -1,5 +1,6 @@
 from mesa import Agent
 import networkx as nx
+import matplotlib.pyplot as plt
 
 class Car(Agent):
     """
@@ -25,6 +26,7 @@ class Car(Agent):
         self.path=[]
         self.patience=2
         self.state=state
+        self.car=0
 
     def move(self):
         """ 
@@ -57,31 +59,32 @@ class Car(Agent):
         next_move_car = [p for p,f in zip(possible_steps, CarSpaces) if f == True]
        
         # if self.patience==0:
-        #     #self.path=self.a_star_search(self.graph, self.pos, self.goal)
+        #     self.path=self.a_star_search(self.graph, self.pos, self.goal)
         #     print("CHanging path patience", self.path)
         #     self.patience=2
-        #     #self.path.pop(0)
+            #self.path.pop(0)
              
         # Cuando el agente esta sobre un semaforo todavía no funciona. 
-        if 
         if len(next_move_car) > 1 and self.path[0] in next_move_car:
             #print("pos", "Nextmove",next_move)
             #decrement patience in the car. The car must wait.
-            print("not being able to move")
+            #print("not being able to move")
             x,y=self.pos
             xp,yp=self.path[0]
-            
+            print("self.pos",self.pos,"self.path[0]",self.path[0])
             if(x+1==xp and y==yp): #If going to the RIGHT
                 if len(next_move_road_right) > 0:
                     print("not moving right")
                     if (xp,yp+1) in next_move_road_right and (xp,yp+1) not in next_move_car and (x,y+1) not in next_move_car:#if right up free
                         print("right up")
+                        # self.path=self.a_star_search(self.graph, self.pos, self.goal)
+                        # print("CHanging path patience", self.path)
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp+1))
                         return
-                    elif (xp,yp-1) in next_move_road_right and (xp,yp-1) not in next_move_car: # and (x,y-1) not in next_move_car:#if right down free
+                    elif (xp,yp-1) in next_move_road_right and (xp,yp-1) not in next_move_car  and (x,y-1) not in next_move_car:#if right down free
                         print("right dow")
-                        self.path.pop(0)
+                        #self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp-1))
                         return
                     # else:
@@ -137,6 +140,8 @@ class Car(Agent):
             print("patience decrementing")
             #self.model.grid.move_agent(self, next_move)
             return  
+        
+        
         if len(next_move_car) > 1 and self.path[0] in next_move_car:
             #print("pos", "Nextmove",next_move)
             #decrement patience in the car. The car must wait.
@@ -148,11 +153,11 @@ class Car(Agent):
         if len(next_move_s) > 0 and self.light==0 and self.path[0] in next_move_s:
             print("REd light patience decrementing")
             self.patience-=1
-            return True
+            return 
         if len(next_move_S) > 0 and self.light==0 and self.path[0] in next_move_S:
             print("REd light patience decrementing")
             self.patience-=1
-            return True
+            return 
         if len(self.path) > 0:
             print("normal move")
             next_move = self.path.pop(0)
@@ -160,7 +165,13 @@ class Car(Agent):
             self.model.grid.move_agent(self, next_move)
             return
         
-           
+    def plot_graph(self, graph):
+        pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
+        #unflip y-axis
+        pos = {node: (node[0], node[1]) for node in graph.nodes}
+        nx.draw(graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
+        plt.show()
+        
     def checkCar(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         for agent in contents:
@@ -183,6 +194,67 @@ class Car(Agent):
                     print(agent.traffic_type)
             return False
     
+    def recalculate(self):
+        #save path in a temporary variable
+        #copy path to a new variable
+        tempPath=[]
+        for i in range(len(self.path)):
+            tempPath.append(self.path[i])
+
+        print("tempPath", tempPath)
+        copyGraph = nx.DiGraph()
+        #go trough the self.graph and copy it to the copyGraph
+        for i in self.graph.nodes:
+            copyGraph.add_node(i)
+        for i in self.graph.edges:
+            copyGraph.add_edge(i[0],i[1])
+
+        # self.plot_graph(copyGraph)
+
+
+        #remove the elements in the path from the graph
+        for i in range(len(tempPath)):
+            #remove everything except in the last position and second to last position
+            if i != len(tempPath)-1 and i != len(tempPath)-2 and i != 0:
+                copyGraph.remove_node(tempPath[i])
+        #recalculate the path
+        newPath = self.a_star_search(copyGraph, self.pos, self.goal)
+        self.path = newPath
+        if self.path is None:
+            self.path = tempPath
+            print("path not found second", self.path)
+            return
+        # self.plot_graph(self.graph)
+        print("recalculated path", self.path)
+        
+    def checkrecalculate(self):
+        content = self.model.grid.get_cell_list_contents(self.pos)
+        #if estzs en @
+        x,y=self.pos
+        for agent in content:
+            print("hello f")
+            if isinstance(agent, Road):
+                if agent.direction=="stararriba":
+                    content1 = self.model.grid.get_cell_list_contents((x,y+1))
+                    for agent in content1:
+                        if isinstance(agent, Car):
+                            print("found car 1")
+                            self.car=1
+                    content2 = self.model.grid.get_cell_list_contents((x,y+2))
+                    for agent in content2:
+                        if isinstance(agent, Car):
+                            print("found car 2")
+                            self.car=2
+                    content3 = self.model.grid.get_cell_list_contents((x,y+3))
+                    for agent in content3:
+                        if isinstance(agent, Car):
+                            print("found car 3")
+                            self.car=3
+                            print("recalculating")
+                            self.recalculate()
+        #if estzs en D
+        #if estzs en I
+        #if estzs en *
     def trafficLight_S(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         print("S")
@@ -281,14 +353,6 @@ class Car(Agent):
     def deleteAgent(self):
         self.model.grid.remove_agent(self)
         self.model.schedule.remove(self)
-        
-    def recalculate(self):
-        #if estzs en @
-            
-        #if estzs en D
-        #if estzs en I
-        #if estzs en *
-        
     
     def step(self):
         """ 
@@ -302,10 +366,12 @@ class Car(Agent):
             self.count=1
             if self.path is not None:
                 self.path.pop(0)
+                self.checkrecalculate()
                 self.move()
             else:
                 print("path not found first", self.path)
         elif self.path is not None and len(self.path) > 0:
+            self.checkrecalculate()
             self.move()
             if self.pos == self.goal:
                 self.state=1
@@ -313,7 +379,7 @@ class Car(Agent):
             print("found path", self.path)
         else:
             # If the path is empty, find a new path
-            self.path = self.a_star_search(self.graph, self.pos, self.goal)
+            #self.path = self.a_star_search(self.graph, self.pos, self.goal)
             print("path not found", self.path)
 
 
