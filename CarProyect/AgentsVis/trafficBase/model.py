@@ -45,7 +45,7 @@ class CityModel(Model):
                             graph.add_node((c, self.height - r - 1), direction=col)  # Add direction as an attribute
 
                         elif col in ["S", "s"]:
-                            agent = Traffic_Light(f"tl_{r * self.width + c}", self,False if col == "S" else True, int(dataDictionary[col]))
+                            agent = Traffic_Light(f"tl_{r * self.width + c}", self, False if col == "S" else True, False if col == "S" else True, int(dataDictionary[col]))
                             print("columna", dataDictionary[col])
                             self.grid.place_agent(agent, (c, self.height - r - 1))
                             self.schedule.add(agent)
@@ -125,6 +125,17 @@ class CityModel(Model):
                                     direction = graph.nodes[node]['direction']
                                     weight = direction_weights.get(direction, 0) 
                                     graph.add_edge(node, neighbor, weight=weight)
+                        elif(x==10 and y==16) or (x==10 and y==17):
+                            neighbors = [
+                                (x - 1, y + 1),
+                                (x, y + 1)
+                            ]
+                            for neighbor in neighbors:
+                                if neighbor in graph.nodes:
+                                    direction = graph.nodes[node]['direction']
+                                    weight = direction_weights.get(direction, 0) 
+                                    graph.add_edge(node, neighbor, weight=weight)
+                            
                         else:
                             neighbors = [
                                 (x + 1, y + 1),
@@ -189,9 +200,8 @@ class CityModel(Model):
                                     weight = direction_weights.get(direction, 0) 
                                     graph.add_edge(node, neighbor, weight=weight)
                 
-                
                 #LEFT
-                if graph.nodes[node]['direction'] == "<" or graph.nodes[node]['direction'] == "I":
+                if graph.nodes[node]['direction'] == "<" or graph.nodes[node]['direction'] == "X":
                     if (x - 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x - 1, y)]:
                         if graph.nodes[(x - 1, y)]['signal_type'] == "long" or graph.nodes[(x - 1, y)]['signal_type'] == "short":
                             neighbors = [
@@ -208,7 +218,7 @@ class CityModel(Model):
                             weight = direction_weights.get(direction, 0) 
                             graph.add_edge((x - 1, y), (x - 2, y), weight=weight)
                     else:
-                        if (x==10 and y==23)or(x==11 and y==11)or(x==12 and y==11) :
+                        if (x==10 and y==23)or(x==11 and y==11)or(x==12 and y==11):
                             neighbors = [
                                 (x - 1, y + 1),
                                 (x - 1, y)
@@ -241,7 +251,7 @@ class CityModel(Model):
                                     weight = direction_weights.get(direction, 0) 
                                     graph.add_edge(node, neighbor, weight=weight)
                 #Right
-                if graph.nodes[node]['direction'] == ">" or graph.nodes[node]['direction'] == "X":
+                if graph.nodes[node]['direction'] == ">" or graph.nodes[node]['direction'] == "I":
                     if (x + 1, y) in graph.nodes and 'signal_type' in graph.nodes[(x + 1, y)]:
                         if graph.nodes[(x + 1, y)]['signal_type'] == "long" or graph.nodes[(x + 1, y)]['signal_type'] == "short":
                             neighbors = [
@@ -290,31 +300,13 @@ class CityModel(Model):
                                     direction = graph.nodes[node]['direction']
                                     weight = direction_weights.get(direction, 0) 
                                     graph.add_edge(node, neighbor, weight=weight)
-                # if graph.nodes[node]['direction'] == "<":
-                #     neighbors = [
-                #         (x - 1, y + 1),
-                #         (x - 1, y),
-                #         (x - 1, y - 1)
-                #     ]
-                    
-                #     for neighbor in neighbors:
-                #         if neighbor in graph.nodes:
-                #             direction = graph.nodes[node]['direction']
-                #             graph.add_edge(node, neighbor, weight=direction)
-
+                
             self.num_agents = N
             self.graph = graph
             self.goal = goal
 
-            # Creates the cars
-            # for i in range(1):
-            #     agent = Car(i, self, self.graph, self.goal)
-            #     # print("graph: ", graph.nodes)
-            #     self.grid.place_agent(agent, (0, 0))
-            #     self.schedule.add(agent)
-
             self.running = True
-            # self.plot_graph(graph)
+            #self.plot_graph(graph)
     
     def create_agent(self):
         for x in range(0,4):
@@ -346,5 +338,5 @@ class CityModel(Model):
             print("Simulation Ended")
         self.schedule.step()
         print("step", self.schedule.steps)
-        if (self.schedule.steps%10 == 0) or self.schedule.steps == 1:
+        if (self.schedule.steps%4 == 0) or self.schedule.steps == 1:
             self.create_agent()
