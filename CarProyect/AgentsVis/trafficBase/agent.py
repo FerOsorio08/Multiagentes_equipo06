@@ -8,7 +8,7 @@ class Car(Agent):
         unique_id: Agent's ID 
         direction: Randomly chosen direction chosen from one of eight directions
     """
-    def __init__(self, unique_id, model,graph,goal):
+    def __init__(self, unique_id, model,graph,goal,state):
         """
         Creates a new random agent.
         Args:
@@ -24,7 +24,7 @@ class Car(Agent):
         self.count=0
         self.path=[]
         self.patience=10
-        self.agentstate=0
+        self.state=state
 
     def move(self):
         """ 
@@ -346,7 +346,7 @@ class Car(Agent):
         Determines the new direction it will take, and then moves
         """
         print(self.pos)
-        if self.agentstate==1:
+        if self.state==1:
             self.deleteAgent()
         elif self.count==0:
             self.path = self.a_star_search(self.graph, self.pos, self.goal)
@@ -359,7 +359,7 @@ class Car(Agent):
         elif self.path is not None and len(self.path) > 0:
             self.move()
             if self.pos == self.goal:
-                self.agentstate=1
+                self.state=1
                 #self.deleteAgent()
             print("found path", self.path)
         else:

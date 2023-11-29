@@ -24,6 +24,7 @@ class CityModel(Model):
             self.destinationList = []
             self.placeofBirth=[(0,0),(0,24),(23,0),(23,24)]
             self.lives=4
+            self.state = 0
 
 
             # Load the map file. The map file is a text file where each character represents an agent.
@@ -313,15 +314,15 @@ class CityModel(Model):
             #     self.schedule.add(agent)
 
             self.running = True
-            self.plot_graph(graph)
-
+            # self.plot_graph(graph)
+    
     def create_agent(self):
         for x in range(0,4):
             i = self.num_agents
             place = self.placeofBirth[x]
             print("place of birth: ", place, x)
             self.goal = self.destinationList[randint(0, 9)]
-            agent = Car(i, self, self.graph, self.goal)
+            agent = Car(i, self, self.graph, self.goal,self.state)
             cell_contents = self.grid.get_cell_list_contents((place))
             if any(isinstance(agent, Car) for agent in cell_contents):
                 print("Hello, an agent already exists in this cell!")
@@ -345,5 +346,5 @@ class CityModel(Model):
             print("Simulation Ended")
         self.schedule.step()
         print("step", self.schedule.steps)
-        if (self.schedule.steps%3 == 0) or self.schedule.steps == 1:
+        if (self.schedule.steps%10 == 0) or self.schedule.steps == 1:
             self.create_agent()

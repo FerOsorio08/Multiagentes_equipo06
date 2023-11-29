@@ -391,10 +391,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c7376b41e8cfe8ff91fb865d4a420f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layout: {fileID: 4900000, guid: 7a3aa36b8948b46998380494296a53ab, type: 3}
+  layout: {fileID: 4900000, guid: bf8e6b1a72e3040498bd743e88abdd14, type: 3}
   roadPrefab: {fileID: 3240343348373693069, guid: 167ecb65e021a4d74a6dbf7d55b0cbff, type: 3}
   buildingPrefab: {fileID: 33555395739272859, guid: 196b388d1bb9d4daf86c5858b958cd8b, type: 3}
-  destinationPrefab: {fileID: 993549348249905, guid: 563375cb179ab4d4d8c0ce2bfc651964, type: 3}
+  destinationPrefab: {fileID: 33555395739272859, guid: 196b388d1bb9d4daf86c5858b958cd8b, type: 3}
   semaphorePrefab: {fileID: 8102729382312259521, guid: ec03db3fda9c46458bf4fb4f61cc11bd, type: 3}
   tileSize: 1
 --- !u!4 &1457529884
