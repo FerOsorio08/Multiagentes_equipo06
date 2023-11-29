@@ -23,7 +23,7 @@ class Car(Agent):
         self.path = None  # Store the path
         self.count=0
         self.path=[]
-        self.patience=10
+        self.patience=2
         self.state=state
 
     def move(self):
@@ -45,11 +45,8 @@ class Car(Agent):
         RoadSpacesLeft = list(map(self.road_left, possible_steps))
         ObstacleSpaces = list(map(self.building, possible_steps))
         CarSpaces = list(map(self.checkCar, possible_steps))
-        # #Checks which grid cells have no agent.
-        # agentSpaces = list(map(self.agentcheck, possible_steps))
-        # #Checks which grid cells have not been visited.
-        # notVisited = list(map(self.notVisited, possible_steps))
         
+        #Saves list of available positions depending on agent type  
         next_move_s = [p for p,f in zip(possible_steps, trafficLighspace_s) if f == True]
         next_move_S = [p for p,f in zip(possible_steps, trafficLighspace_S) if f == True]
         next_move_road_up = [p for p,f in zip(possible_steps, RoadSpacesUp) if f == True]
@@ -59,7 +56,14 @@ class Car(Agent):
         next_move_obstacle = [p for p,f in zip(possible_steps, ObstacleSpaces) if f == True]
         next_move_car = [p for p,f in zip(possible_steps, CarSpaces) if f == True]
        
+        # if self.patience==0:
+        #     #self.path=self.a_star_search(self.graph, self.pos, self.goal)
+        #     print("CHanging path patience", self.path)
+        #     self.patience=2
+        #     #self.path.pop(0)
+             
         # Cuando el agente esta sobre un semaforo todavía no funciona. 
+        if 
         if len(next_move_car) > 1 and self.path[0] in next_move_car:
             #print("pos", "Nextmove",next_move)
             #decrement patience in the car. The car must wait.
@@ -70,16 +74,18 @@ class Car(Agent):
             if(x+1==xp and y==yp): #If going to the RIGHT
                 if len(next_move_road_right) > 0:
                     print("not moving right")
-                    if (xp,yp+1) in next_move_road_right and (xp,yp+1) not in next_move_car:#if right up free
+                    if (xp,yp+1) in next_move_road_right and (xp,yp+1) not in next_move_car and (x,y+1) not in next_move_car:#if right up free
                         print("right up")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp+1))
                         return
-                    elif (xp,yp-1) in next_move_road_right and (xp,yp-1) not in next_move_car:#if right down free
+                    elif (xp,yp-1) in next_move_road_right and (xp,yp-1) not in next_move_car: # and (x,y-1) not in next_move_car:#if right down free
                         print("right dow")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp-1))
                         return
+                    # else:
+                    #     self.patience-=1
             elif(y+1==yp): #If going UP
                 print("up")
                 if len(next_move_road_up) > 0:
@@ -154,71 +160,6 @@ class Car(Agent):
             self.model.grid.move_agent(self, next_move)
             return
         
-        #Se encarga de revisar si existe un coche en ese lugar
-        # if len(next_move_car) > 0:
-        #     next_move = self.random.choice(next_move_car) 
-        #     print("pos", "Nextmove",next_move)
-        #     #decrement patience in the car. The car must wait.
-        #     self.model.grid.move_agent(self, next_move)
-        #     return
-        
-        # #Se encarga de mover hacia la derecha
-        # if len(next_move_road_right) > 0:
-        #     next_move = self.random.choice(next_move_road_right) 
-        #     print("pos", "Nextmove",next_move)
-        #     x,y=next_move
-        #     self.lastDirection="Right"
-        #     if (x,y) in self.path:
-        #         self.model.grid.move_agent(self, (x,y))
-        #     # self.model.grid.move_agent(self, (x,y))
-        #     return
-        
-        # #Se encarga de mover hacia la izquierda
-        # if len(next_move_road_left) > 0:
-        #     next_move = self.random.choice(next_move_road_left) 
-        #     print("pos", "Nextmove",next_move)
-        #     x,y=next_move
-        #     if (x,y) in self.path:
-        #         self.model.grid.move_agent(self, (x,y))
-        #     # self.model.grid.move_agent(self, (x,y))
-        #     return
-        # #Se encarga de mover hacia abajo
-        # if len(next_move_road_down) > 0:
-        #     next_move = self.random.choice(next_move_road_down) 
-        #     print("pos", "Nextmove",next_move)
-        #     x,y=next_move
-        #     if (x,y) in self.path:
-        #         self.model.grid.move_agent(self, (x,y))
-        #     # self.model.grid.move_agent(self, (x,y))
-        #     return
-        # #Se encarga de mover hacia arriba
-        # if len(next_move_road_up) > 0:
-        #     next_move = self.random.choice(next_move_road_up) 
-        #     print("pos", "Nextmove",next_move)
-        #     x,y=next_move
-        #     if (x,y) in self.path:
-        #         self.model.grid.move_agent(self, (x,y))
-        #     # self.model.grid.move_agent(self, (x,y))
-        #     return
-        # if len(next_move_s) > 0 and self.light==0:
-        #     print("green Light")
-        #     next_move = self.random.choice(next_move_s)
-        #     x,y=next_move
-        #     if (x,y) in self.path:
-        #         self.model.grid.move_agent(self, (x,y))
-        #     # self.model.grid.move_agent(self, (x,y))
-        #     #self.light=1
-        #     return True
-        # if len(next_move_S) > 0 and self.light==0:
-        #     print("green Light")
-        #     next_move = self.random.choice(next_move_S)
-        #     x,y=next_move
-        #     if (x,y) in self.path:
-        #         self.model.grid.move_agent(self, (x,y))
-        #     # self.model.grid.move_agent(self, (x,y))
-        #     #self.light=1
-        #     return True
-    
            
     def checkCar(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
@@ -228,7 +169,7 @@ class Car(Agent):
         return False 
 
     def trafficLight_s(self, pos):
-        #print("Checking for green lists")
+        print("Checking for green lists s")
         contents = self.model.grid.get_cell_list_contents(pos)
         #print(contents)
         for agent in contents:
@@ -244,7 +185,7 @@ class Car(Agent):
     
     def trafficLight_S(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
-        #print(contents)
+        print("S")
         for agent in contents:
             if isinstance(agent, Traffic_Light):
                 if agent.traffic_type == False:
@@ -259,7 +200,7 @@ class Car(Agent):
             x1,y1=pos
             if isinstance(agent, Road):
                 if (x1==x and y1==y+1) or (x1-1==x and y1==y+1) or (x1+1==x and y1==y+1): #only top neighbors
-                    if agent.direction =="Up":
+                    if agent.direction =="Up" or agent.direction=="stararriba":
                         print("pos",pos,"self.pos", self.pos)
                         return True
             return False
@@ -271,7 +212,7 @@ class Car(Agent):
             x1,y1=pos
             if isinstance(agent, Road):
                 if (x1==x and y1==y-1) or (x1-1==x and y1==y-1) or (x1+1==x and y1==y-1): #only down neighbors
-                    if agent.direction =="Down":
+                    if agent.direction =="Down" or agent.direction=="starabajo":
                         print("pos",pos,"self.pos", self.pos)
                         return True
             return False
@@ -283,7 +224,7 @@ class Car(Agent):
             x1,y1=pos
             if isinstance(agent, Road):
                 if (x1==x+1 and y1==y+1) or (x1==x+1 and y1==y) or (x1==x+1 and y1==y-1): #only right neighbors
-                    if agent.direction =="Right":
+                    if agent.direction =="Right" or agent.direction=="starderecha":
                         print("pos",pos,"self.pos", self.pos)
                         return True
             return False
@@ -295,7 +236,7 @@ class Car(Agent):
             x1,y1=pos
             if isinstance(agent, Road):
                 if (x1==x-1 and y1==y+1) or (x1==x-1 and y1==y) or (x1==x-1 and y1==y-1): #only right neighbors
-                    if agent.direction =="Left":
+                    if agent.direction =="Left" or agent.direction=="starizquierda":
                         print("pos",pos,"self.pos", self.pos)
                         return True
             return False
@@ -340,6 +281,14 @@ class Car(Agent):
     def deleteAgent(self):
         self.model.grid.remove_agent(self)
         self.model.schedule.remove(self)
+        
+    def recalculate(self):
+        #if estzs en @
+            
+        #if estzs en D
+        #if estzs en I
+        #if estzs en *
+        
     
     def step(self):
         """ 
@@ -394,6 +343,10 @@ class Traffic_Light(Agent):
         """ 
         To change the state (green or red) of the traffic light in case you consider the time to change of each traffic light.
         """
+        # print("Traffic light created")
+        # print("Traffic type: ", self.traffic_type)
+        # print("State: ", self.state)
+        # print("Time to change: ", self.timeToChange)
         if self.model.schedule.steps % self.timeToChange == 0:
             self.state = not self.state
 
