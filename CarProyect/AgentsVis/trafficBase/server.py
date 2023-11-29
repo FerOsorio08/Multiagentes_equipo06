@@ -53,7 +53,7 @@ def getAgents():
             for agent in a:
                 if isinstance(agent, Car):
                     print("Agent", agent)
-                    agentPositions += [{"id": str(agent.unique_id), "x": x, "y":0, "z":z, "goal":agent.goal}]
+                    agentPositions += [{"id": str(agent.unique_id), "x": x, "y":0, "z":z, "goal":agent.goal, "state":agent.state}]
         
 
         return jsonify({'positions':agentPositions})

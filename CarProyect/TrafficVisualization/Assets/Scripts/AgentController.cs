@@ -24,16 +24,17 @@ public class AgentData
         z (float): The z coordinate of the agent.
     */
     public string id;
-    public float x, y, z;
+    public float x, y, z, state;
     public float[] goal;
 
-    public AgentData(string id, float x, float y, float z, float[] goal)
+    public AgentData(string id, float x, float y, float z, float[] goal, float state)
     {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
         this.goal = goal;
+        this.state = state;
     }
 }
 [Serializable]
@@ -250,9 +251,9 @@ public class AgentController : MonoBehaviour
                         ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
                         applyTransforms.getPosition(newAgentPosition, false);
 
-                        // Check if the agent has reached its goal within the tolerance
-                        if (Mathf.Abs(agent.goal[0] - newAgentPosition.x) < positionTolerance &&
-                            Mathf.Abs(agent.goal[1] - newAgentPosition.y) < positionTolerance)
+                        // Check if the agent state is 1 (reached its goal).
+
+                        if (agent.state == 1)
                         {
                             Debug.Log("Agent " + agent.id + " has reached its goal");
                             Destroy(agents[agent.id]);
