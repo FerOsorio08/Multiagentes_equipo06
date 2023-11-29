@@ -393,7 +393,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layout: {fileID: 4900000, guid: bf8e6b1a72e3040498bd743e88abdd14, type: 3}
   roadPrefab: {fileID: 3240343348373693069, guid: 167ecb65e021a4d74a6dbf7d55b0cbff, type: 3}
-  buildingPrefab: {fileID: 33555395739272859, guid: 196b388d1bb9d4daf86c5858b958cd8b, type: 3}
+  buildingPrefab:
+  - {fileID: 3309855215458137964, guid: 3ffa7b4901694445799d1fd89d715797, type: 3}
+  - {fileID: 1507436093227993457, guid: 59f77b550d4614d9a8f3e1ddf687b77e, type: 3}
+  - {fileID: 3492653009103688344, guid: 79377bffa1eef4068b330595c6914e31, type: 3}
+  - {fileID: 394786666608179338, guid: 84223868443ae4d4587e552bf5233ea5, type: 3}
   destinationPrefab: {fileID: 33555395739272859, guid: 196b388d1bb9d4daf86c5858b958cd8b, type: 3}
   semaphorePrefab: {fileID: 8102729382312259521, guid: ec03db3fda9c46458bf4fb4f61cc11bd, type: 3}
   tileSize: 1
@@ -476,6 +480,63 @@ LightingSettings:
   m_PVRTiledBaking: 0
   m_NumRaysToShootPerTexel: -1
   m_RespectSceneVisibilityWhenBakingGI: 0
+--- !u!1001 &4713452136666032451
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.8254163
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.7527362
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2413993043792911968, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8583429132488631216, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
+      propertyPath: m_Name
+      value: BlueBilding
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fb19d2eb07dd749e895e01820b7aca3d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -484,3 +545,4 @@ SceneRoots:
   - {fileID: 395527431}
   - {fileID: 1457529884}
   - {fileID: 95277437}
+  - {fileID: 4713452136666032451}
