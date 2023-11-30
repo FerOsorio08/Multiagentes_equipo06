@@ -38,6 +38,7 @@ public class ApplyTransforms : MonoBehaviour
     float currentTime=0;
     float motionTime=10;
     float roundedAngle;
+    float angleDegrees;
     Vector3 startPosition;
     Vector3 endPosition;
 
@@ -119,11 +120,17 @@ public class ApplyTransforms : MonoBehaviour
         //D=GetDirection(startPosition, endPosition);
         Vector3 newposition=PositionLerp(startPosition, endPosition, T);
         Vector3 newdirection=endPosition-startPosition;
-        //create the matrices
-        // Calculate the angle in radians
-        float angleRadians = Mathf.Atan2(newdirection.z, newdirection.x);
-        // Convert the angle to degrees
-        float angleDegrees = angleRadians * Mathf.Rad2Deg;
+        
+        if (newdirection == Vector3.zero) {
+        Debug.Log("zero");
+        } else {
+            // Calculate the angle in radians
+            float angleRadians = Mathf.Atan2(newdirection.z, newdirection.x);
+            // Convert the angle to degrees
+            angleDegrees = angleRadians * Mathf.Rad2Deg;
+
+            Debug.Log("newdirection: " + newdirection);
+        }
         Matrix4x4 move= HW_Transforms.TranslationMat(newposition.x , newposition.y, newposition.z);
         Matrix4x4 moveOrigin = HW_Transforms.TranslationMat(-displacement.x, -displacement.y, -displacement.z);
         Matrix4x4 moveObject = HW_Transforms.TranslationMat(displacement.x, displacement.y, displacement.z);
