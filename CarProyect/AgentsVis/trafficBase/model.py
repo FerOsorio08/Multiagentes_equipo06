@@ -347,28 +347,28 @@ class CityModel(Model):
         print("step", self.schedule.steps)
         if (self.schedule.steps%4 == 0) or self.schedule.steps == 1:
             self.create_agent()
-        if(self.schedule.steps%100 == 0):
-            ##mandar coches al api
+        # if(self.schedule.steps%100 == 0):
+        #     ##mandar coches al api
 
-            url = "http://52.1.3.19:8585/api/"
-            endpoint = "validate_attempt"
+        #     url = "http://52.1.3.19:8585/api/"
+        #     endpoint = "validate_attempt"
 
 
-            data = {
-                "year" : 2023,
-                "classroom" : 302,
-                "name" : "Equipo 6",
-                "num_cars": self.CarsReached
-            }
+        #     data = {
+        #         "year" : 2023,
+        #         "classroom" : 302,
+        #         "name" : "Equipo 6",
+        #         "num_cars": self.CarsReached
+        #     }
 
-            headers = {
-                "Content-Type": "application/json"
-            }
+        #     headers = {
+        #         "Content-Type": "application/json"
+        #     }
 
-            response = requests.post(url+endpoint, data=json.dumps(data), headers=headers)
-            print("Request " + "successful" if response.status_code == 200 else "failed", "Status code:", response.status_code)
-            # print("Response:", response.text())
-            print("mandar coches")
+        #     response = requests.post(url+endpoint, data=json.dumps(data), headers=headers)
+        #     print("Request " + "successful" if response.status_code == 200 else "failed", "Status code:", response.status_code)
+        #     # print("Response:", response.text())
+        #     print("mandar coches")
             # if self.shedule.steps % 100== 0:
             #     ##Mandar los coches al api
             #     print("mandar coches")
