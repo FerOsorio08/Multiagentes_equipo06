@@ -318,13 +318,13 @@ class CityModel(Model):
         for x in range(0,4):
             i = self.num_agents
             place = self.placeofBirth[x]
-            print("place of birth: ", place, x)
+            #print("place of birth: ", place, x)
             self.goal = self.destinationList[randint(0, 9)]
             agent = Car(i, self, self.graph, self.goal,self.state)
             self.carsCreated += 1
             cell_contents = self.grid.get_cell_list_contents((place))
             if any(isinstance(agent, Car) for agent in cell_contents):
-                print("Hello, an agent already exists in this cell!")
+                #print("Hello, an agent already exists in this cell!")
                 self.lives-=1
             else:
                 self.grid.place_agent(agent, place)

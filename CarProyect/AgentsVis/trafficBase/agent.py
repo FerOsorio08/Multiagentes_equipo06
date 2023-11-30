@@ -61,18 +61,19 @@ class Car(Agent):
        
        #Conditions for Car Agent
         if self.starSignal()==True:
+            
             self.checkrecalculate()
             print("would be:",self.path[0])
             next_move = self.path.pop(0)
-            self.model.grid.move_agent(self, next_move)
+            if next_move not in next_move_obstacle:
+                self.car=0
+                self.model.grid.move_agent(self, next_move)
+                return
             print("car is equal to: ", self.car)
             self.car=0
             return
             
         if len(next_move_car) > 1 and self.path[0] in next_move_car:
-            #print("pos", "Nextmove",next_move)
-            #decrement patience in the car. The car must wait.
-            #print("not being able to move")
             x,y=self.pos
             xp,yp=self.path[0]
             print("self.pos",self.pos,"self.path[0]",self.path[0])
@@ -81,89 +82,76 @@ class Car(Agent):
                     print("not moving right")
                     if (xp,yp+1) in next_move_road_right and (xp,yp+1) not in next_move_car and (x,y+1) not in next_move_car:#if right up free
                         print("right up")
-                        # self.path=self.a_star_search(self.graph, self.pos, self.goal)
-                        # print("CHanging path patience", self.path)
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp+1))
                         return
-                    elif (xp,yp-1) in next_move_road_right and (xp,yp-1) not in next_move_car  and (x,y-1) not in next_move_car:#if right down free
-                        print("right dow")
-                        #self.path.pop(0)
+                    if (xp,yp-1) in next_move_road_right and (xp,yp-1) not in next_move_car  and (x,y-1) not in next_move_car:#if right down free
+                        self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp-1))
                         return
-                    # else:
-                    #     self.patience-=1
+                    else:
+                        self.patience-=1
+                        return
             elif(y+1==yp): #If going UP
-                print("up")
                 if len(next_move_road_up) > 0:
-                    print("up not empty")
                     if (xp+1,yp) in next_move_road_up and (xp+1,yp) not in next_move_car and (x+1, y) not in next_move_car:
-                        print("op right")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp+1,yp))
                         return
-                    elif (xp-1,yp) in next_move_road_up and (xp-1,yp) not in next_move_car and (x-1, y) not in next_move_car:
-                        print("left op")
+                    if (xp-1,yp) in next_move_road_up and (xp-1,yp) not in next_move_car and (x-1, y) not in next_move_car:
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp-1,yp))
                         return
+                    else:
+                        return
             elif y - 1 == yp:  # If going DOWN
-                print("down")
                 if len(next_move_road_down) > 0:
-                    # print("down not empty")
-                    # print("y:", y, "yp:", yp)
-                    # print("next_move_road_down:", next_move_road_down)
-                    # print("Conditions:", (xp + 1, yp) in next_move_road_down, (xp + 1, yp) not in next_move_car, (xp - 1, yp) in next_move_road_down, (xp - 1, yp) not in next_move_car)
-
                     if (xp + 1, yp) in next_move_road_down and (xp + 1, yp) not in next_move_car and (x+1, y) not in next_move_car:  # if down right is free
-                        print("down right")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp + 1, yp))
                         return
-                    elif (xp - 1, yp) in next_move_road_down and (xp - 1, yp) not in next_move_car and (x-1, y) not in next_move_car:  # if down left is free
-                        print("down left")
+                    if (xp - 1, yp) in next_move_road_down and (xp - 1, yp) not in next_move_car and (x-1, y) not in next_move_car:  # if down left is free
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp - 1, yp))
                         return
+                    else:
+                        return
             elif(x-1==xp and y==yp): #If going to the left.
                 if len(next_move_road_left) > 0:
-                    print("not moving left")
                     if (xp,yp+1) in next_move_road_left and (xp,yp+1) not in next_move_car and (x, y+1) not in next_move_car:#if right up free
-                        print("left up")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp+1))
                         return
-                    elif (xp,yp-1) in next_move_road_left and (xp,yp-1) not in next_move_car and (x, y+1) not in next_move_car:#if right down free
-                        print("left down")
+                    if (xp,yp-1) in next_move_road_left and (xp,yp-1) not in next_move_car and (x, y+1) not in next_move_car:#if right down free
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp-1))
                         return
-                #If going LEFT
-                
+                    else:
+                        return
+                #If going LEFT 
             self.patience-=1
             print("patience decrementing")
             #self.model.grid.move_agent(self, next_move)
             return  
         
         if len(next_move_car) > 1 and self.path[0] in next_move_car:
-            #print("pos", "Nextmove",next_move)
-            #decrement patience in the car. The car must wait.
+            print("Move: only car")
             self.patience-=1
-            print("patience decrementing")
+            #print("patience decrementing")
             #self.model.grid.move_agent(self, next_move)
             return
             
         if len(next_move_s) > 0 and self.light==0 and self.path[0] in next_move_s:
-            print("REd light patience decrementing")
+            #print("REd light patience decrementing")
             #self.recalculate()
             self.patience-=1
             return 
         if len(next_move_S) > 0 and self.light==0 and self.path[0] in next_move_S:
-            print("REd light patience decrementing")
+            #print("REd light patience decrementing")
             self.patience-=1
             return 
         if len(self.path) > 0:
-            print("normal move")
+            #print("normal move")
             next_move = self.path.pop(0)
             print(next_move)
             self.model.grid.move_agent(self, next_move)
@@ -285,11 +273,6 @@ class Car(Agent):
                                 print("¿recalculating?")
                 elif agent.direction=="starderecha":
                     self.car=0
-                    # content1 = self.model.grid.get_cell_list_contents((x+1,y))
-                    # for agent in content1:
-                    #     if isinstance(agent, Car):
-                    #         print("found car 1")
-                    #         self.car=1
                     content2 = self.model.grid.get_cell_list_contents((x+3,y))
                     for agent in content2:
                         if isinstance(agent, Car):
@@ -339,7 +322,7 @@ class Car(Agent):
             if isinstance(agent, Road):
                 if (x1==x and y1==y+1) or (x1-1==x and y1==y+1) or (x1+1==x and y1==y+1): #only top neighbors
                     if agent.direction =="Up" or agent.direction=="stararriba":
-                        print("pos",pos,"self.pos", self.pos)
+                        #print("pos",pos,"self.pos", self.pos)
                         return True
             return False
     
@@ -351,7 +334,7 @@ class Car(Agent):
             if isinstance(agent, Road):
                 if (x1==x and y1==y-1) or (x1-1==x and y1==y-1) or (x1+1==x and y1==y-1): #only down neighbors
                     if agent.direction =="Down" or agent.direction=="starabajo":
-                        print("pos",pos,"self.pos", self.pos)
+                        #print("pos",pos,"self.pos", self.pos)
                         return True
             return False
     
@@ -363,7 +346,7 @@ class Car(Agent):
             if isinstance(agent, Road):
                 if (x1==x+1 and y1==y+1) or (x1==x+1 and y1==y) or (x1==x+1 and y1==y-1): #only right neighbors
                     if agent.direction =="Right" or agent.direction=="starderecha":
-                        print("pos",pos,"self.pos", self.pos)
+                        #print("pos",pos,"self.pos", self.pos)
                         return True
             return False
     
@@ -375,7 +358,7 @@ class Car(Agent):
             if isinstance(agent, Road):
                 if (x1==x-1 and y1==y+1) or (x1==x-1 and y1==y) or (x1==x-1 and y1==y-1): #only right neighbors
                     if agent.direction =="Left" or agent.direction=="starizquierda":
-                        print("pos",pos,"self.pos", self.pos)
+                        #print("pos",pos,"self.pos", self.pos)
                         return True
             return False
     
@@ -395,8 +378,8 @@ class Car(Agent):
             goal: The goal node
         """
         # self.graph.add_node(self.initialPos)
-        print("start: ", start)
-        print("goal: ", goal)
+        #print("start: ", start)
+        #print("goal: ", goal)
         x, y = start
         j, i = goal
         try:
@@ -405,7 +388,7 @@ class Car(Agent):
             return path
         except nx.NetworkXNoPath:
             # If no path is found, return None
-            print("start", start," goal ", goal)
+            #print("start", start," goal ", goal)
             return None
     
     #Complejidad O(1)
@@ -443,7 +426,7 @@ class Car(Agent):
             if self.pos == self.goal:
                 self.state=1
                 #self.deleteAgent()
-            print("found path", self.path)
+            #print("found path", self.path)
         else:
             # If the path is empty, find a new path
             self.path = self.a_star_search(self.graph, self.pos, self.goal)
