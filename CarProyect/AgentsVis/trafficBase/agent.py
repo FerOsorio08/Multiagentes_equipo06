@@ -27,6 +27,7 @@ class Car(Agent):
         self.patience=2
         self.state=state
         self.car=0
+        self.CarsReached = 0
 
     def move(self):
         """ 
@@ -418,6 +419,7 @@ class Car(Agent):
     def deleteAgent(self):
         self.model.grid.remove_agent(self)
         self.model.schedule.remove(self)
+        self.model.CarsReached += 1
     
     def step(self):
         """ 

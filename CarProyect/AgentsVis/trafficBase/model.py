@@ -6,6 +6,8 @@ import json
 import networkx as nx
 import matplotlib.pyplot as plt
 from random import randint
+import requests
+import json
 class CityModel(Model):
     """ 
         Creates a model based on a city map.
@@ -25,6 +27,8 @@ class CityModel(Model):
             self.placeofBirth=[(0,0),(0,24),(23,0),(23,24)]
             self.lives=4
             self.state = 0
+            self.carsCreated = 0
+            self.CarsReached = 0
 
 
             # Load the map file. The map file is a text file where each character represents an agent.
@@ -317,6 +321,7 @@ class CityModel(Model):
             print("place of birth: ", place, x)
             self.goal = self.destinationList[randint(0, 9)]
             agent = Car(i, self, self.graph, self.goal,self.state)
+            self.carsCreated += 1
             cell_contents = self.grid.get_cell_list_contents((place))
             if any(isinstance(agent, Car) for agent in cell_contents):
                 print("Hello, an agent already exists in this cell!")
@@ -342,3 +347,28 @@ class CityModel(Model):
         print("step", self.schedule.steps)
         if (self.schedule.steps%4 == 0) or self.schedule.steps == 1:
             self.create_agent()
+        if(self.schedule.steps%100 == 0):
+            ##mandar coches al api
+
+            url = "http://52.1.3.19:8585/api/"
+            endpoint = "validate_attempt"
+
+
+            data = {
+                "year" : 2023,
+                "classroom" : 302,
+                "name" : "Equipo 6",
+                "num_cars": self.CarsReached
+            }
+
+            headers = {
+                "Content-Type": "application/json"
+            }
+
+            response = requests.post(url+endpoint, data=json.dumps(data), headers=headers)
+            print("Request " + "successful" if response.status_code == 200 else "failed", "Status code:", response.status_code)
+            # print("Response:", response.text())
+            print("mandar coches")
+            # if self.shedule.steps % 100== 0:
+            #     ##Mandar los coches al api
+            #     print("mandar coches")
