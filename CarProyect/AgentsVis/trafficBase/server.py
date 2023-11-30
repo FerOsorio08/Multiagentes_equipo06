@@ -93,6 +93,8 @@ def updateModel():
     if request.method == 'GET':
         randomModel.step()
         currentStep += 1
+        if currentStep == 1002:
+            raise KeyboardInterrupt
         return jsonify({'message':f'Model updated to step {currentStep}.', 'currentStep':currentStep})
 
 
