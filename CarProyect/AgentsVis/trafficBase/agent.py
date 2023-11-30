@@ -96,12 +96,12 @@ class Car(Agent):
                 print("up")
                 if len(next_move_road_up) > 0:
                     print("up not empty")
-                    if (xp+1,yp) in next_move_road_up and (xp+1,yp) not in next_move_car:
+                    if (xp+1,yp) in next_move_road_up and (xp+1,yp) not in next_move_car and (x+1, y) not in next_move_car:
                         print("op right")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp+1,yp))
                         return
-                    elif (xp-1,yp) in next_move_road_up and (xp-1,yp) not in next_move_car:
+                    elif (xp-1,yp) in next_move_road_up and (xp-1,yp) not in next_move_car and (x-1, y) not in next_move_car:
                         print("left op")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp-1,yp))
@@ -114,12 +114,12 @@ class Car(Agent):
                     # print("next_move_road_down:", next_move_road_down)
                     # print("Conditions:", (xp + 1, yp) in next_move_road_down, (xp + 1, yp) not in next_move_car, (xp - 1, yp) in next_move_road_down, (xp - 1, yp) not in next_move_car)
 
-                    if (xp + 1, yp) in next_move_road_down and (xp + 1, yp) not in next_move_car:  # if down right is free
+                    if (xp + 1, yp) in next_move_road_down and (xp + 1, yp) not in next_move_car and (x+1, y) not in next_move_car:  # if down right is free
                         print("down right")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp + 1, yp))
                         return
-                    elif (xp - 1, yp) in next_move_road_down and (xp - 1, yp) not in next_move_car:  # if down left is free
+                    elif (xp - 1, yp) in next_move_road_down and (xp - 1, yp) not in next_move_car and (x-1, y) not in next_move_car:  # if down left is free
                         print("down left")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp - 1, yp))
@@ -127,12 +127,12 @@ class Car(Agent):
             elif(x-1==xp and y==yp): #If going to the left.
                 if len(next_move_road_left) > 0:
                     print("not moving left")
-                    if (xp,yp+1) in next_move_road_left and (xp,yp+1) not in next_move_car:#if right up free
+                    if (xp,yp+1) in next_move_road_left and (xp,yp+1) not in next_move_car and (x, y+1) not in next_move_car:#if right up free
                         print("left up")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp+1))
                         return
-                    elif (xp,yp-1) in next_move_road_left and (xp,yp-1) not in next_move_car:#if right down free
+                    elif (xp,yp-1) in next_move_road_left and (xp,yp-1) not in next_move_car and (x, y+1) not in next_move_car:#if right down free
                         print("left down")
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp-1))
