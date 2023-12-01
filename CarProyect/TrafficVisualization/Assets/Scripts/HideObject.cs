@@ -1,3 +1,6 @@
+//Lucia Barrenechea y Fernanda Osorio
+// 30 de noviembre de 2023
+// Descripcion: Este script se encarga de modificar la visibilidad de un objeto
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

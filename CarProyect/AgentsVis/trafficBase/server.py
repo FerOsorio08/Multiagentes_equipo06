@@ -1,6 +1,8 @@
-# TC2008B. Sistemas Multiagentes y Gráficas Computacionales
-# Python flask server to interact with Unity. Based on the code provided by Sergio Ruiz.
-# Octavio Navarro. October 2023git
+#Lucía Barrenechea y Fernanda Osorio
+# 30 de noviembre del 2023
+#Proyecto de Mobilidad Urbana
+#Modelo de tráfico basado en agentes
+#Api para visualizar el modelo de tráfico basado en agentes y mandar los datos a la interfaz gráfica
 
 from flask import Flask, request, jsonify
 from model import CityModel
@@ -12,8 +14,10 @@ height = 24
 randomModel = None
 currentStep = 0
 
+# Create the app:
 app = Flask("Traffic example")
 
+# Define the routes:
 @app.route('/init', methods=['GET', 'POST'])
 def initModel():
     global currentStep, randomModel, number_agents, width, height
@@ -98,5 +102,6 @@ def updateModel():
         return jsonify({'message':f'Model updated to step {currentStep}.', 'currentStep':currentStep})
 
 
+# Run the app:
 if __name__=='__main__':
     app.run(host="localhost", port=8585, debug=True)

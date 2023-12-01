@@ -1,7 +1,7 @@
-﻿// TC2008B. Sistemas Multiagentes y Gráficas Computacionales
-// C# client to interact with Python. Based on the code provided by Sergio Ruiz.
-// Octavio Navarro. October 2023
-
+﻿// Lucia Barrenechea y Fernanda Osorio
+// 30 de noviembre de 2023
+//Descripción: este script utiliza la información recibida del servidor para actualizar la posición de los agentes en la simulación, asi como los estados de los semáforos.
+//También se encarga de enviar la configuración inicial al servidor.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,6 +56,7 @@ public class TrafficLight
 
 [Serializable]
 
+// Class to store the data of all the agents.
 public class AgentsData
 {
     /*
@@ -69,6 +70,7 @@ public class AgentsData
     public AgentsData() => this.positions = new List<AgentData>();
 }
 
+// Class to store the data of all the obstacles.
 public class TrafficLights
 {
     public List<TrafficLight> positions;
@@ -103,6 +105,8 @@ public class AgentController : MonoBehaviour
         timeToUpdate (float): The time to update the simulation.
         timer (float): The timer to update the simulation.
         dt (float): The delta time.
+        positionTolerance (float): The tolerance of the position.
+
     */
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
@@ -173,6 +177,9 @@ public class AgentController : MonoBehaviour
         }
     }
  
+
+    // IEnumerator for the UpdateSimulation method.
+    // UpdatedSimulation method contains a UnityWebRequest to get the data from the server.
     IEnumerator UpdateSimulation()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + updateEndpoint);
@@ -239,6 +246,8 @@ public class AgentController : MonoBehaviour
             foreach(AgentData agent in agentsData.positions)
             {
                 Vector3 newAgentPosition = new Vector3(agent.x, agent.y, agent.z);
+
+                // If the agent is not in the agents dictionary, it is added.
                     if(!agents.ContainsKey(agent.id))
                     {
                         // prevPositions[agent.id] = newAgentPosition;
@@ -246,6 +255,7 @@ public class AgentController : MonoBehaviour
                         ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
                         applyTransforms.getPosition(newAgentPosition, true);
                     }
+                    // If the agent is in the agents dictionary, it is updated.   
                      else
                     {
                         ApplyTransforms applyTransforms = agents[agent.id].GetComponentInChildren<ApplyTransforms>();
@@ -264,10 +274,6 @@ public class AgentController : MonoBehaviour
             updated = true;
         }
     }
-
-    // traffic light si solo al inicio
-    //hacer script para cambiar la luz del semadforo
-    // desde aqui se accese al estado del semaforo y se llaman los metodos para cambiarlo
 
     IEnumerator GetTrafficData() 
     {
@@ -291,10 +297,12 @@ public class AgentController : MonoBehaviour
 
               foreach (TrafficLight traffic in trafficData.positions)
             {
+                // si started es falso, entonces se crea el semaforo
                 if (!started)
                 {
                     trafficLightColors[traffic.id] = Instantiate(trafficLightPrefab, new Vector3(traffic.x, traffic.y, traffic.z), Quaternion.identity);
                 }
+                // sino entonces se cambian las luces que emite de acuerdo a su valor de estado
                 Light greenLight = trafficLightColors[traffic.id].transform.Find("green").GetComponent<Light>();
                 Light redLight = trafficLightColors[traffic.id].transform.Find("red").GetComponent<Light>();
                 greenLight.enabled = traffic.state;  // Access the state property from the TrafficLight object

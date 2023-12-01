@@ -1,3 +1,6 @@
+# Lucia Barrenechea y Fernanda Osorio
+# 30 de noviembre del 2023
+# Servidor para visualizar el modelo de trafico base en MESA
 from agent import *
 from model import CityModel
 from mesa.visualization import CanvasGrid, BarChartModule

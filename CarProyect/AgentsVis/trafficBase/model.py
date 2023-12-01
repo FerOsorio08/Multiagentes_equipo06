@@ -1,4 +1,7 @@
 #Lucía Barrenechea y Fernanda Osorio
+# 30 de noviembre del 2023
+#Proyecto de Mobilidad Urbana
+#Modelo de la ciudad
 from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
@@ -74,21 +77,6 @@ class CityModel(Model):
                             
                             # print("goal: ", goal)
 
-
-            # Add directed edges for neighboring intersections with direction as weight
-            # for node in graph.nodes:
-            #     x, y = node
-            #     neighbors = [
-            #         (x + 1, y+1),
-            #         (x - 1, y+1),
-            #         (x, y + 1)
-            #         (x, y - 1)
-            #     ]
-            #     for neighbor in neighbors:
-            #         if neighbor in graph.nodes:
-            #             direction = graph.nodes[node]['direction']
-            #             # print("direction: ", direction)
-            #             graph.add_edge(node, neighbor, weight=direction)
             direction_weights = {
                 "v": 1,
                 "^": 2,
@@ -100,9 +88,9 @@ class CityModel(Model):
                 "@": 2
             }
             
+            # Add edges to the graph
             for node in graph.nodes:
                 x, y = node
-                # x1,y1 = neighbor_node
 
                 # UP
                 if graph.nodes[node]['direction'] == "^" or graph.nodes[node]['direction'] == "@":
@@ -315,6 +303,7 @@ class CityModel(Model):
             self.running = True
             #self.plot_graph(graph)
     
+    # función para crear agentes
     def create_agent(self):
         for x in range(0,4):
             i = self.num_agents
@@ -331,7 +320,8 @@ class CityModel(Model):
                 self.grid.place_agent(agent, place)
                 self.schedule.add(agent)
                 self.num_agents -= 1
-           
+    
+    # función para graficar el grafo
     def plot_graph(self, graph):
         pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
         #unflip y-axis
@@ -339,6 +329,7 @@ class CityModel(Model):
         nx.draw(graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
         plt.show()
 
+    # función para avanzar el modeloß
     def step(self):
         '''Advance the model by one step.'''
         if self.lives == 0 :
@@ -379,6 +370,3 @@ class CityModel(Model):
             print("NUMERO DE COCHES", self.CarsReached)
         if(self.schedule.steps == 1000):
             self.running = False
-            # if self.shedule.steps % 100== 0:
-            #     ##Mandar los coches al api
-            #     print("mandar coches")s
