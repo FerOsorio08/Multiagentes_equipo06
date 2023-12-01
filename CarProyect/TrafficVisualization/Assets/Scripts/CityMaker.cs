@@ -1,3 +1,6 @@
+// Lucia Barrenechea y Fernanda Osorio
+// 30 de noviembre de 2023
+// Descripcion: Este script se encarga de leer un archivo de texto que contiene la informacion de la ciudad y crea los objetos correspondientes en la escenas
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +14,6 @@ public class CityMaker : MonoBehaviour
     [SerializeField] GameObject semaphorePrefab;
     [SerializeField] int tileSize;
 
-    // [SerializeField] GameObject carPrefab;
 
     // Start is called before the first frame update
     void Start()

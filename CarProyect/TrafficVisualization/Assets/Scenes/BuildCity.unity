@@ -158,7 +158,7 @@ MonoBehaviour:
   NAgents: 0
   width: 0
   height: 0
-  timeToUpdate: 4
+  timeToUpdate: 0.1
   carPrefab: {fileID: 5691042183876350592, guid: b6452e904d9ee4a79853747e4fb76bef, type: 3}
   trafficLightPrefab: {fileID: 5455260791973520397, guid: 07138169c6510428d9ed2b8098002a63, type: 3}
 --- !u!4 &95277437

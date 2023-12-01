@@ -1,9 +1,6 @@
-/*
-Functions to work with transformation matrices in 3D
-
-Gilberto Echeverria
-2022-11-03
-*/
+//Lucia Barrenechea y Fernanda Osorio
+// 30 de noviembre de 2023
+// Descripcion: Este script tiene las funciones para crear las matrices de transformacion
 
 using System.Collections;
 using System.Collections.Generic;

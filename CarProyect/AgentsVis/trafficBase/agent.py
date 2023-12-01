@@ -1,8 +1,14 @@
 #Lucía Barrenechea y Fernanda Osorio
+# 30 de noviembre del 2023
+#Proyecto de Mobilidad Urbana
+#Agentes: Car, Traffic_Light, Destination, Obstacle, Road
+#Archivo para crear los agentes y sus funciones
 from mesa import Agent
 import networkx as nx
 import matplotlib.pyplot as plt
 
+# Agent Car, has the A* algorithm to find the shortest path to the destination
+# it initializes the agent with the graph, the initial position, the goal and the state
 class Car(Agent):
     """
     Agent that moves randomly.
@@ -442,6 +448,7 @@ class Car(Agent):
             print("path not found", self.path)
 
 
+# Agent Traffic_Light, has the state of the traffic light and the time to change
 class Traffic_Light(Agent):
     """
     Traffic light. Where the traffic lights are in the grid.
@@ -475,6 +482,8 @@ class Traffic_Light(Agent):
         if self.model.schedule.steps % self.timeToChange == 0:
             self.state = not self.state
 
+
+# Agent Destination, has the goal of the car
 class Destination(Agent):
     """
     Destination agent. Where each car should go.
@@ -485,6 +494,8 @@ class Destination(Agent):
     def step(self):
         pass
 
+
+# Agent Obstacle, has the position of the obstacles
 class Obstacle(Agent):
     """
     Obstacle agent. Just to add obstacles to the grid.
@@ -495,6 +506,8 @@ class Obstacle(Agent):
     def step(self):
         pass
 
+
+# Agent Road, has the position of the roads and the directions where the cars can move
 class Road(Agent):
     """
     Road agent. Determines where the cars can move, and in which direction.

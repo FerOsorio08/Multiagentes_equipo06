@@ -1,3 +1,7 @@
+// Lucia Barrenechea y Fernanda Osorio
+// 30 de noviembre de 2023
+// Descripcion: Este script se encarga de mover el carro por la ciudad utiliando matrices de transformacion
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
