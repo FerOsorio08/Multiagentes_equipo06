@@ -1,3 +1,4 @@
+#Lucía Barrenechea y Fernanda Osorio
 from mesa import Agent
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -89,9 +90,9 @@ class Car(Agent):
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp-1))
                         return
-                    else:
-                        self.patience-=1
-                        return
+                    # else:
+                    #     self.patience-=1
+                    #     return
             elif(y+1==yp): #If going UP
                 if len(next_move_road_up) > 0:
                     if (xp+1,yp) in next_move_road_up and (xp+1,yp) not in next_move_car and (x+1, y) not in next_move_car:
@@ -102,8 +103,8 @@ class Car(Agent):
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp-1,yp))
                         return
-                    else:
-                        return
+                    # else:
+                    #     return
             elif y - 1 == yp:  # If going DOWN
                 if len(next_move_road_down) > 0:
                     if (xp + 1, yp) in next_move_road_down and (xp + 1, yp) not in next_move_car and (x+1, y) not in next_move_car:  # if down right is free
@@ -114,8 +115,8 @@ class Car(Agent):
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp - 1, yp))
                         return
-                    else:
-                        return
+                    # else:
+                    #     return
             elif(x-1==xp and y==yp): #If going to the left.
                 if len(next_move_road_left) > 0:
                     if (xp,yp+1) in next_move_road_left and (xp,yp+1) not in next_move_car and (x, y+1) not in next_move_car:#if right up free
@@ -126,8 +127,8 @@ class Car(Agent):
                         self.path.pop(0)
                         self.model.grid.move_agent(self, (xp,yp-1))
                         return
-                    else:
-                        return
+                    # else:
+                    #     return
                 #If going LEFT 
             self.patience-=1
             print("patience decrementing")
@@ -135,10 +136,8 @@ class Car(Agent):
             return  
         
         if len(next_move_car) > 1 and self.path[0] in next_move_car:
-            print("Move: only car")
             self.patience-=1
-            #print("patience decrementing")
-            #self.model.grid.move_agent(self, next_move)
+            print("patience decrementing")
             return
             
         if len(next_move_s) > 0 and self.light==0 and self.path[0] in next_move_s:
@@ -163,7 +162,8 @@ class Car(Agent):
     #     pos = {node: (node[0], node[1]) for node in graph.nodes}
     #     nx.draw(graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
     #     plt.show()
-        
+    
+    #Checa condiciones por si hay coches enfrente   
     def checkCar(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         for agent in contents:
@@ -171,6 +171,7 @@ class Car(Agent):
                 return True
         return False 
 
+    #Checa condiciones por si hay simbolo de trafico verde
     def trafficLight_s(self, pos):
         #print("Checking for green lists s")
         contents = self.model.grid.get_cell_list_contents(pos)
@@ -186,6 +187,7 @@ class Car(Agent):
                     print(agent.traffic_type)
             return False
     
+    #Checa condiciones por si hay simbolo de recalcular A*
     def starSignal(self):
         content = self.model.grid.get_cell_list_contents(self.pos)
         x,y=self.pos
@@ -194,7 +196,8 @@ class Car(Agent):
                 if agent.direction=="stararriba" or agent.direction=="starabajo" or agent.direction=="starderecha" or agent.direction=="starizquierda":
                     return True
         return False
-        
+    
+    #Calcula a* modificando el grafo   
     def recalculate(self):
         #save path in a temporary variable
         #copy path to a new variable
@@ -230,7 +233,8 @@ class Car(Agent):
             return
         # self.plot_graph(self.graph)
         print("recalculated path", self.path)
-        
+    
+    #Checa condiciones para ver si a* se recalcula    
     def checkrecalculate(self):
         content = self.model.grid.get_cell_list_contents(self.pos)
         print("Hello trying 1")
@@ -303,7 +307,8 @@ class Car(Agent):
                             if self.car==2:
                                 print("izq star calc")
                                 self.recalculate()
-       
+    
+    #Checa condiciones por si hay simbolo de trafico verde  
     def trafficLight_S(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         #print("S")
@@ -314,6 +319,7 @@ class Car(Agent):
                         return True 
             return False
     
+    #Encuentra espacio de calle para arriba disponibles para el agente
     def road_up(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         for agent in contents:
@@ -326,6 +332,7 @@ class Car(Agent):
                         return True
             return False
     
+    #Encuentra espacio de calle para abajo disponibles para abjo
     def road_down(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         for agent in contents:
@@ -338,6 +345,8 @@ class Car(Agent):
                         return True
             return False
     
+    
+    #Encuentra espacio de calle para la derecha disponibles para el agente
     def road_right(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         for agent in contents:
@@ -350,6 +359,7 @@ class Car(Agent):
                         return True
             return False
     
+    #Encuentra espacio de calle para abajo disponibles para el agente
     def road_left(self, pos):
         contents = self.model.grid.get_cell_list_contents(pos)
         for agent in contents:
@@ -415,7 +425,6 @@ class Car(Agent):
             self.path = self.a_star_search(self.graph, self.pos, self.goal)
             self.count=1
             if self.path is not None:
-                #self.checkrecalculate()
                 self.path.pop(0)
                 self.move()
             else:
